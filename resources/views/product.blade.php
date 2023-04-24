@@ -76,6 +76,9 @@
                   </div>
             </div>
         </div>
+        <div class="row" style="margin-top: 100px;">
+            @include("components.footer")
+        </div>
     </div>
 </section>
 @endsection
