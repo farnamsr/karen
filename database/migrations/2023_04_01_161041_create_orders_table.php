@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->bigInteger("user_id")->unsigned();
             $table->tinyInteger("status");
-            $table->timestamps();
+            $table->bigInteger("created_at")->unsigned();
+            $table->bigInteger("updated_at")->unsigned();
         });
     }
 

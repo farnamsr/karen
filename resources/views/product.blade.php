@@ -48,9 +48,9 @@
                     <span style="font-size: 20px; font-weight: bold;" class="text-success">{{$product->price}}</span>
                     <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
                 </div>
-                <input class="form-control text-center mt-4 w-50 mx-auto" type="text" placeholder="تعداد محصول" aria-label=".form-control-sm example">
+                <input id="p-count" class="form-control text-center mt-4 w-50 mx-auto" type="text" placeholder="تعداد محصول" aria-label=".form-control-sm example">
                 <div class="d-grid gap-2 w-50 mt-4 mx-auto">
-                    <button class="btn btn-primary" type="button">افزودن به لیست سفارشات</button>
+                    <button id="submit-order" class="btn btn-primary" type="button">افزودن به لیست سفارشات</button>
                   </div>
             </div>
             <div class="col-md-5 col-sm-12" id="imgs-col">
@@ -91,5 +91,22 @@
 @endsection
 
 @section("scripts")
+<script src="{{asset("js/jquery.js")}}"></script>
 <script src="{{asset("js/navbar.js")}}"></script>
+<script>
+    $(document).ready(function() {
+        $("#submit-order").on("click", function() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('order')}}",
+                type:"POST",
+                data: {pid:"{{$product->id}}", count: $("#p-count").val()}
+            }).done(function(resp) {
+                if(resp["result"] == true) {
+
+                }
+            });
+        })
+    });
+</script>
 @endsection

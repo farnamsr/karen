@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get("/cats", [DashboardController::class, "cats"])->name("cats");
 
     });
+    Route::post("/order", [ShopController::class, "order"])->name("order");
 });
 
 
