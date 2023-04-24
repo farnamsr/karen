@@ -46,12 +46,11 @@
             </div>
             <div class="col-md-7 col-sm-12 mt-4"
             style="border: 1px solid #e9e9e9;padding: 30px;border-radius: 5px;">
-                <div class="h2">عنوان محصول</div>
-                    <p style="padding: 15px;">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت
-                        چاپ و با استفاده از طراحان گرافیک است</p>
+                <div class="h2">{{$product->name}}</div>
+                    <p style="padding: 15px;">{{$product->description}}</p>
                 <div class="price-text text-center">
                     <span style="padding: 15px;">قیمت: </span>
-                    <span style="font-size: 20px; font-weight: bold;" class="text-success">3,500,000</span>
+                    <span style="font-size: 20px; font-weight: bold;" class="text-success">{{$product->price}}</span>
                     <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
                 </div>
                 <input class="form-control text-center mt-4 w-50 mx-auto" type="text" placeholder="تعداد محصول" aria-label=".form-control-sm example">

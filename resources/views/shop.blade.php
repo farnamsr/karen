@@ -39,7 +39,7 @@
             <div class="col-md-10 col-sm-12">
                 <div class="shop-container">
                     @foreach ($products as $product)
-                    <div class="box" id="{{$product->id}}" style="cursor: pointer">
+                    <div class="box" id="{{$product->id}}" style="cursor: pointer" data-href="{{route('getProduct', $product->id)}}">
                         <div class="box-img">
                             <img src="{{$product->img_path}}" alt="">
                         </div>
@@ -83,6 +83,9 @@
         $("#see-more").on("click", function() {
             currentPage += 1;
             getProducts(checkedCats, currentPage);
+        });
+        $(document).on("click", ".box", function() {
+            window.location.href = $(this).attr("data-href");
         });
         function getProducts(checkedCats, currentPage) {
             $.ajax({

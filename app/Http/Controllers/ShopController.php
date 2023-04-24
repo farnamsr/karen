@@ -21,4 +21,9 @@ class ShopController extends Controller
         }
         return view("shop", compact("cats", "products"));
     }
+    public function product($pid)
+    {
+        $product = Product::where("id", $pid)->with("images")->first();
+        return view("product", compact('product'));
+    }
 }
