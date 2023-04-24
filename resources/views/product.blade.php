@@ -6,9 +6,25 @@
 <link rel="stylesheet" href="{{asset("css/bootstrap.css")}}">
 <style>
     .img-rat {
-        width: 100%;
-        height: 600px;
+        width: 80%;
+        height: 500px;
         object-fit: cover;
+    }
+    #footer{ margin-top: 100px; }
+    #order-row{ margin-top: 80px; }
+    @media screen and (max-width: 768px) {
+        #order-row{
+            margin-top: 30px;
+        }
+        #imgs-col{
+            margin-top: 30px;
+        }
+        .img-rat {
+            width: 80%;
+            height: 350px;
+            object-fit: cover;
+        }
+        #footer{ margin-top: 15px; }
     }
 </style>
 @endsection
@@ -22,45 +38,7 @@
 @section("content")
 <section>
     <div class="container">
-        <div class="row mt-5">
-            <div class="col-md-5 col-sm-12">
-                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-indicators">
-                        @for ($i = 0; $i < count($product->images); $i++)
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{$i}}"
-                          @if($i == 0) aria-current="true" class="active" @endif() aria-label="Slide {{$i + 1}}"></button>
-                        @endfor
-                      {{-- <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button> --}}
-                    </div>
-                    <div class="carousel-inner">
-                        @for ($i = 0; $i < count($product->images); $i++)
-                            <div class="carousel-item @if($i == 0) active @endif()">
-                                @php
-                                    $img = $product->images[$i];
-                                    $imgName = "{$img->product_id}_{$img->id}_{$img->created_at}.{$img->ext}"
-                                @endphp
-                            <img src="{{asset("storage/products/{$imgName}")}}" class="d-block w-100 img-rat" alt="">
-                            </div>
-                            {{-- <div class="carousel-item">
-                            <img src="{{asset("img/p3.jpg")}}" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                            <img src="{{asset("img/p4.jpg")}}" class="d-block w-100" alt="...">
-                            </div> --}}
-                        @endfor
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                      <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                      <span class="visually-hidden">Next</span>
-                    </button>
-                  </div>
-            </div>
+        <div id="order-row" class="row ">
             <div class="col-md-7 col-sm-12 mt-4"
             style="border: 1px solid #e9e9e9;padding: 30px;border-radius: 5px;">
                 <div class="h2">{{$product->name}}</div>
@@ -75,12 +53,41 @@
                     <button class="btn btn-primary" type="button">افزودن به لیست سفارشات</button>
                   </div>
             </div>
-        </div>
-        <div class="row" style="margin-top: 100px;">
-            @include("components.footer")
+            <div class="col-md-5 col-sm-12" id="imgs-col">
+                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        @for ($i = 0; $i < count($product->images); $i++)
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{$i}}"
+                          @if($i == 0) aria-current="true" class="active" @endif() aria-label="Slide {{$i + 1}}"></button>
+                        @endfor
+                    </div>
+                    <div class="carousel-inner">
+                        @for ($i = 0; $i < count($product->images); $i++)
+                            <div class="carousel-item @if($i == 0) active @endif()">
+                                @php
+                                    $img = $product->images[$i];
+                                    $imgName = "{$img->product_id}_{$img->id}_{$img->created_at}.{$img->ext}"
+                                @endphp
+                            <img src="{{asset("storage/products/{$imgName}")}}" class="d-block w-100 img-rat" alt="">
+                            </div>
+                        @endfor
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+            </div>
         </div>
     </div>
 </section>
+
+@include("components.footer")
+
 @endsection
 
 @section("scripts")
