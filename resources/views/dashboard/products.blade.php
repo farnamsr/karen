@@ -24,11 +24,6 @@
 }
 
 .img-rat {
-  /* display: block;
-  max-width:100%;
-  max-height:200px;
-  width: auto;
-  height: auto; */
     width: 100%;
     height: 150px;
     object-fit: cover;
