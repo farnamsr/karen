@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string("color", 32)->nullable();
             $table->integer("count")->unsigned();
             $table->string("unit_price", 16);
+            $table->tinyInteger("status");
+            $table->bigInteger("delivery_time")->unsigned()->nullable();
             $table->bigInteger("created_at")->unsigned();
             $table->bigInteger("updated_at")->unsigned();
         });

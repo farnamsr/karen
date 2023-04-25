@@ -93,6 +93,7 @@
 @section("scripts")
 <script src="{{asset("js/jquery.js")}}"></script>
 <script src="{{asset("js/navbar.js")}}"></script>
+<script src="{{asset("js/sweet.js")}}"></script>
 <script>
     $(document).ready(function() {
         $("#submit-order").on("click", function() {
@@ -103,7 +104,11 @@
                 data: {pid:"{{$product->id}}", count: $("#p-count").val()}
             }).done(function(resp) {
                 if(resp["result"] == true) {
-
+                    Swal.fire(
+                    'سفارش شما با موفقیت ثبت شد',
+                    'لطفا جهت تکمیل سفارشات ثبت شده، از قسمت پنل کاربری اقدام به پرداخت نمایید.',
+                    'success'
+                    )
                 }
             });
         })

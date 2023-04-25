@@ -9,9 +9,7 @@ class Order extends Model
 {
     use HasFactory;
     const STATUS_WAITING_USER = 1;
-    const STATUS_WAITING_ADMIN = 2;
-    const STATUS_ACCEPTED = 3;
-    const STATUS_REJECTED = 4;
+    const STATUS_PAIED = 2;
 
     public function getDateFormat(){
         return 'U';
@@ -31,5 +29,9 @@ class Order extends Model
     public function details()
     {
         return $this->hasMany(OrderDetail::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
