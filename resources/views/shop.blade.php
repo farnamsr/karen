@@ -25,7 +25,7 @@
 <section>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-2 mt-5">
+            <div class="col-md-3 mt-5">
                 <ul class="list-group" style="margin-right: -90px; width: 90%">
                     <div class="h5 mb-3" style="font-size: 18px;">دسته بندی محصولات</div>
                     @foreach ($cats as $cat)
@@ -36,7 +36,7 @@
                     @endforeach
                   </ul>
             </div>
-            <div class="col-md-10 col-sm-12">
+            <div class="col-md-9 col-sm-12">
                 <div class="shop-container">
                     @foreach ($products as $product)
                     <div class="box" id="{{$product->id}}" style="cursor: pointer" data-href="{{route('getProduct', $product->id)}}">

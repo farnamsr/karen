@@ -18,7 +18,7 @@
     <div class="container">
         <div class="row mt-5">
             <div class="col-md-4 col-sm-12 mt-4">
-                <div class="card w-100" style="width: 18rem;">
+                <div class="card w-100" style="width: 18rem; background: #f3f3f391">
                     <div class="card-body">
                       <h5 class="card-title">{{$user->name . " " . $user->lastname}}</h5>
                       <h6 class="card-subtitle mb-2 text-muted">{{$user->phone_number}}</h6>
@@ -29,6 +29,25 @@
                     </div>
                   </div>
                     <button class="btn btn-primary w-100 mt-4" type="button">ثبت سفارش اختصاصی</button>
+                    <div class="h5 mt-5 mb-3">فهرست سفارشات</div>
+                    <ul class="list-group">
+                        <li style="background: #eee9f1" class="list-group-item d-flex justify-content-between align-items-center">
+                          در انتظار پرداخت
+                          <span class="badge bg-primary rounded-pill">14</span>
+                        </li>
+                        <li style="background: #fbffca" class="list-group-item d-flex justify-content-between align-items-center">
+                          در انتظار تایید مدیریت
+                          <span class="badge bg-primary rounded-pill">2</span>
+                        </li>
+                        <li style="background: #d8f0ff" class="list-group-item d-flex justify-content-between align-items-center">
+                          سفارشات جاری
+                          <span class="badge bg-primary rounded-pill">1</span>
+                        </li>
+                        <li style="background: #cfffcf" class="list-group-item d-flex justify-content-between align-items-center">
+                            سفارشات تحویل شده
+                            <span class="badge bg-primary rounded-pill">1</span>
+                          </li>
+                      </ul>
             </div>
             <div class="col-md-8 col-sm-12 mt-4">
                 <div class="card">
