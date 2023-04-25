@@ -105,27 +105,16 @@
                                 </tr>
                               </thead>
                               <tbody>
+                                @for ($i = 0; $i < count($notPayedOrders); $i++)
+                                @php $item = $notPayedOrders[$i] @endphp
                                 <tr>
-                                  <th scope="row">1</th>
-                                  <td>Mark</td>
-                                  <td>Otto</td>
-                                  <td>Otto</td>
-                                  <td>@mdo</td>
+                                    <td>{{$i + 1}}</td>
+                                    <td>{{$item->product->name}}</td>
+                                    <td>{{$item->count}}</td>
+                                    <td>{{number_format($item->unit_price)}}</td>
+                                    <td>{{number_format($item->payable)}}</td>
                                 </tr>
-                                <tr>
-                                  <th scope="row">2</th>
-                                  <td>Jacob</td>
-                                  <td>Thornton</td>
-                                  <td>Thornton</td>
-                                  <td>@fat</td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">3</th>
-                                  <td>Thornton</td>
-                                  <td >Larry the Bird</td>
-                                  <td >Larry the Bird</td>
-                                  <td>@twitter</td>
-                                </tr>
+                                @endfor
                               </tbody>
                           </table>
                     </div>

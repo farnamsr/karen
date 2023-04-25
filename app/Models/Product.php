@@ -34,6 +34,10 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    public function orderItems()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 
     public static function products($cats = [])
     {
