@@ -34,15 +34,27 @@
                       </div>
                     </div>
                   </div>
-                    <button class="btn btn-danger  w-100 mt-4" type="button">ثبت سفارش اختصاصی</button>
-                    <button class="btn btn-primary  w-100 mt-2" type="button">پرداخت و تکمیل سفارشات</button>
+                    <button class="btn btn-outline-danger  w-100 mt-4" type="button">ثبت سفارش اختصاصی</button>
+                    <hr class="mt-4">
+                    <div class="h6 mt-3 text-center">پرداخت و تکمیل سفارشات</div>
+                    <div class="btn-group w-100 mt-2" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pay-modal">پرداخت نقدی</button>
+                        <button type="button" class="btn btn-warning">ثبت چک ها</button>
+                      </div>
+                      <div class="info-text mt-3 text-center">
+                        <i class='bx bx-info-circle text-primary'></i>
+                        <small class="text-secondary">مشتری گرامی جهت تکمیل سفارشات ثبت شده حد اقل یک سوم از هزینه بصورت نقد و
+                          ما بقی حد اکثر در قالب سه فقره چک دریافت میشود</small>
+                      </div>
+                    <hr class="mt-2">
+
+                    {{-- <button class="btn btn-primary  w-100 mt-2" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">پرداخت و تکمیل سفارشات</button> --}}
 
                     {{-- <div class="btn-group w-100 mt-4" role="group" aria-label="Basic example">
                         <button type="button" class="btn btn-outline-primary" style="margin-left: 10px">ثبت سفارش اختصاصی</button>
                         <button type="button" class="btn btn-outline-success">پرداخت و تایید سفارشات</button>
                       </div> --}}
-
-                    <ul class="list-group mt-5">
+                    <ul class="list-group mt-4">
                         <li style="cursor: pointer;" class="list-group-item d-flex  align-items-center">
                             <i class='bx bx-cart list-ic'></i>
                           سفارشات
@@ -159,6 +171,52 @@
         </div>
     </div>
 </section>
+{{-- Modal --}}
+<div class="modal fade" id="pay-modal" tabindex="-1" aria-labelledby="pay-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="pay-modal">پرداخت نقدی</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="h4 text-center text-secondary">صورت حساب سفارشات</div>
+                        <table class="table text-center mt-4">
+                            <thead>
+                              <tr>
+                                <th scope="col">مجموع قیمت سفارشات</th>
+                                <th scope="col">بدهی</th>
+                                <th scope="col">حد اقل پرداخت نقدی</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{{number_format($sum)}}</td>
+                                <td>{{number_format($sum)}}</td>
+                                <td>{{number_format(round(($sum / 3), -3))}}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div class="mb-3 text-center">
+                            <span class="">مقدار پرداخت نقدی:</span>
+                            <input type="" class="form-control mt-2" id="pay-amount" placeholder="">
+                          </div>
+                          <div class="d-grid gap-2 col-6 mx-auto  w-100">
+                            <button class="btn btn-success" type="button">پرداخت از طریق درگاه آنلاین</button>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button> --}}
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section("scripts")

@@ -15,11 +15,12 @@ class PanelController extends Controller
             ->where("status", Order::STATUS_WAITING_USER)
             ->first()
             ->details()
-            ->orderBy("created_at")
-            ->paginate(5);
+            ->orderBy("created_at");
+        $sum = $notPayedOrders->sum("payable");
         return view("panel", [
             "user" => auth()->user(),
-            "notPayedOrders" => $notPayedOrders
+            "sum" => $sum,
+            "notPayedOrders" => $notPayedOrders->paginate(5)
         ]);
     }
 }
