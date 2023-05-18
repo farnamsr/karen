@@ -231,7 +231,7 @@
 
 
   <div class="modal fade" id="check-modal" tabindex="-1" aria-labelledby="check-modal" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="pay-modal">ثبت چک ها</h1>
@@ -261,9 +261,54 @@
                               </tr>
                             </tbody>
                           </table>
-                          <div class="d-grid gap-2 col-6 mx-auto  w-100">
+                          {{-- <div class="d-grid gap-2 col-6 mx-auto  w-100">
                             <button id="pay" class="btn btn-success" type="button">ثبت چک ها</button>
-                          </div>
+                          </div> --}}
+                    </div>
+                </div>
+                <div class="h4 text-center mt-3">مشخصات چک ها</div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control text-center" placeholder="مبلغ" aria-label="">
+                    </div>
+                    <div class="col">
+                        <input type="date" class="form-control" placeholder="Last name" aria-label="">
+                    </div>
+                    <div class="col">
+                        <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col">
+                        <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control text-center" placeholder="مبلغ" aria-label="">
+                    </div>
+                    <div class="col">
+                        <input type="date" class="form-control" placeholder="" aria-label="">
+                    </div>
+                    <div class="col">
+                        <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
+                    </div>
+                </div>
+
+                <div class="row mt-3 mb-3">
+                    <div class="col">
+                        <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="First name">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control text-center" placeholder="مبلغ" aria-label="">
+                    </div>
+                    <div class="col">
+                        <input type="date" class="form-control" placeholder="" aria-label="">
+                    </div>
+                    <div class="col">
+                        <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
                     </div>
                 </div>
             </div>
