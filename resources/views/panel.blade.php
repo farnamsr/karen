@@ -272,7 +272,7 @@
                         <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="">
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control text-center" placeholder="مبلغ" aria-label="">
+                        <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
                         <input type="date" class="form-control" placeholder="Last name" aria-label="">
@@ -287,7 +287,7 @@
                         <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="">
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control text-center" placeholder="مبلغ" aria-label="">
+                        <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
                         <input type="date" class="form-control" placeholder="" aria-label="">
@@ -302,7 +302,7 @@
                         <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="First name">
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control text-center" placeholder="مبلغ" aria-label="">
+                        <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
                         <input type="date" class="form-control" placeholder="" aria-label="">
@@ -340,9 +340,20 @@
                 }
             });
         }
-        // function separateString(str) {
-
-        // }
+        function separateString(str) {
+            let inp = str;
+            let len = inp.length;
+            let separated = "";
+            let counter = 1;
+            for(let i = len - 1; i >= 0; --i) {
+                separated = inp[i] + separated;
+                if(counter % 3 == 0 && counter < len){
+                    separated = "," + separated;
+                }
+                ++counter;
+            }
+            return separated;
+        }
         $("#pay").on("click", function() {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -361,23 +372,17 @@
                 }
             });
         })
-        $("#pay-amount").on("input", function(e) {
-            let inp = $(this).val().replace(/,/g, "");
-            let len = inp.length;
-            let separated = "";
-            let counter = 1;
-            for(let i = len - 1; i >= 0; --i) {
-                separated = inp[i] + separated;
-                if(counter % 3 == 0 && counter < len){
-                    separated = "," + separated;
-                }
-                ++counter;
-            }
+        $("#pay-amount, .check-amount").on("input", function(e) {
+            let separated = separateString($(this).val().replace(/,/g, ""));
             $(this).val(separated);
         });
         $("#pay-btn").on("click", function() {
             $("#modal-debt").html($("#debt").html())
         });
+        // $(".check-amount").on("input", function() {
+        //     let separated = separateString($(this).val().replace(/,/g, ""));
+        //     $(this).val(separated);
+        // })
     });
 </script>
 @endsection
