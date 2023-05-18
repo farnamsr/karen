@@ -16,7 +16,9 @@ return new class extends Migration
             $table->bigInteger("order_id")->unsigned();
             $table->string("amount", 16);
             $table->tinyInteger("type");
-            $table->timestamps();
+            $table->tinyInteger("status");
+            $table->bigInteger("created_at")->unsigned();
+            $table->bigInteger("updated_at")->unsigned();
         });
     }
 

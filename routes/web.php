@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
 
     });
     Route::post("/order", [ShopController::class, "order"])->name("order");
+    Route::post("/pay", [PanelController::class, "payment"])->name("pay");
+    Route::get("/debt", [PanelController::class, "debt"])->name("debt");
 });
 
 

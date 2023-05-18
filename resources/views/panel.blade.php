@@ -34,12 +34,18 @@
                       </div>
                     </div>
                   </div>
-                    <button class="btn btn-outline-danger  w-100 mt-4" type="button">ثبت سفارش اختصاصی</button>
-                    <hr class="mt-4">
+                    <button class="btn btn-outline-danger w-100 mt-4" type="button">ثبت سفارش اختصاصی</button>
+                    <div class="debt-cont mt-3">
+                        <div>مجموع بدهی:</div>
+                        <div class="text-center text-secondary" style="font-size: 30px; letter-spacing: 2px" id="debt"></div>
+                    </div>
+                    <div class="line">
+                        <hr class="mt-2">
+                    </div>
                     <div class="h6 mt-3 text-center">پرداخت و تکمیل سفارشات</div>
                     <div class="btn-group w-100 mt-2" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pay-modal">پرداخت نقدی</button>
-                        <button type="button" class="btn btn-warning">ثبت چک ها</button>
+                        <button id="pay-btn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pay-modal">پرداخت نقدی</button>
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#check-modal">ثبت چک ها</button>
                       </div>
                       <div class="info-text mt-3 text-center">
                         <i class='bx bx-info-circle text-primary'></i>
@@ -189,30 +195,80 @@
                               <tr>
                                 <th scope="col">مجموع قیمت سفارشات</th>
                                 <th scope="col">بدهی</th>
+                                @if($payedAmount == 0)
                                 <th scope="col">حد اقل پرداخت نقدی</th>
+                                @endif()
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                <td>{{number_format($sum)}}</td>
-                                <td>{{number_format($sum)}}</td>
-                                <td>{{number_format(round(($sum / 3), -3))}}</td>
+                                @php $minToPay = number_format(round(($sum / 3), -3)); @endphp
+                                <td style="font-size: 20px; letter-spacing: 2px;">{{fa_number(number_format($sum))}}</td>
+                                {{-- <td>{{number_format($sum - $payedAmount)}}</td> --}}
+                                <td id="modal-debt" style="font-size: 20px; letter-spacing: 2px;"></td>
+                                @if($payedAmount == 0)<td>{{$minToPay}}</td>@endif()
                               </tr>
                             </tbody>
                           </table>
                           <div class="mb-3 text-center">
                             <span class="">مقدار پرداخت نقدی:</span>
-                            <input type="" class="form-control mt-2" id="pay-amount" placeholder="">
+                            <input type="text" class="form-control mt-2 text-center" id="pay-amount"
+                            placeholder="" value="@if($payedAmount == 0) {{$minToPay}} @endif()"
+                             style="letter-spacing: 3px; font-size: 20px;">
                           </div>
                           <div class="d-grid gap-2 col-6 mx-auto  w-100">
-                            <button class="btn btn-success" type="button">پرداخت از طریق درگاه آنلاین</button>
+                            <button id="pay" class="btn btn-success" type="button">پرداخت از طریق درگاه آنلاین</button>
                           </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-          {{-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button> --}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="check-modal" tabindex="-1" aria-labelledby="check-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="pay-modal">ثبت چک ها</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="h4 text-center text-secondary">صورت حساب سفارشات</div>
+                        <table class="table text-center mt-4">
+                            <thead>
+                              <tr>
+                                <th scope="col">مجموع قیمت سفارشات</th>
+                                <th scope="col">بدهی</th>
+                                @if($payedAmount == 0)
+                                <th scope="col">حد اقل پرداخت نقدی</th>
+                                @endif()
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                @php $minToPay = number_format(round(($sum / 3), -3)); @endphp
+                                <td>{{number_format($sum)}}</td>
+                                <td>{{number_format($sum - $payedAmount)}}</td>
+                                @if($payedAmount == 0)<td>{{$minToPay}}</td>@endif()
+                              </tr>
+                            </tbody>
+                          </table>
+                          <div class="d-grid gap-2 col-6 mx-auto  w-100">
+                            <button id="pay" class="btn btn-success" type="button">ثبت چک ها</button>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
         </div>
       </div>
     </div>
@@ -221,4 +277,62 @@
 
 @section("scripts")
 <script src="{{asset("js/navbar.js")}}"></script>
+<script src="{{asset("js/jquery.js")}}"></script>
+<script>
+    $(document).ready(function() {
+        let debt;
+        getDebt();
+        $("#debt").html(debt);
+        function getDebt() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('debt')}}",
+                type:"GET",
+                async:false
+            }).done(function(resp) {
+                if(resp["result"] == true) {
+                    debt = resp['debt'];
+                }
+            });
+        }
+        // function separateString(str) {
+
+        // }
+        $("#pay").on("click", function() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('pay')}}",
+                type:"POST",
+                data: {
+                    amount: $("#pay-amount").val().replace(/,/g, ""),
+                    type: 1, // cash payment type
+                    status: 1,
+                    order_id: "{{$notPayedOrders[0]['order_id'] ?? null}}"
+                }
+            }).done(function(resp) {
+                if(resp["result"] == true) {
+                    getDebt();
+                    $("#debt").html(debt);
+                }
+            });
+        })
+        $("#pay-amount").on("input", function(e) {
+            let inp = $(this).val().replace(/,/g, "");
+            let len = inp.length;
+            let separated = "";
+            let counter = 1;
+            for(let i = len - 1; i >= 0; --i) {
+                separated = inp[i] + separated;
+                if(counter % 3 == 0 && counter < len){
+                    separated = "," + separated;
+                }
+                ++counter;
+            }
+            $(this).val(separated);
+        });
+        $("#pay-btn").on("click", function() {
+            $("#modal-debt").html($("#debt").html())
+        });
+    });
+</script>
 @endsection
