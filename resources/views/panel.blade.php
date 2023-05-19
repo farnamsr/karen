@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{asset("css/home.css")}}">
 <link rel="stylesheet" href="{{asset("css/fonts.css")}}">
 <link rel="stylesheet" href="{{asset("css/bootstrap.css")}}">
+<link rel="stylesheet" href="{{asset("css/datepicker.css")}}">
 <style>
     .list-ic{
         margin-left: 5px;
@@ -275,7 +276,7 @@
                         <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
-                        <input type="date" class="form-control" placeholder="Last name" aria-label="">
+                        <input style="text-align: center" type="text" class="form-control" id="dp1" placeholder="انتخاب تاریخ">
                     </div>
                     <div class="col">
                         <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
@@ -290,7 +291,7 @@
                         <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
-                        <input type="date" class="form-control" placeholder="" aria-label="">
+                        <input style="text-align: center" type="text" class="form-control" id="dp2" placeholder="انتخاب تاریخ">
                     </div>
                     <div class="col">
                         <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
@@ -305,7 +306,7 @@
                         <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
-                        <input type="date" class="form-control" placeholder="" aria-label="">
+                        <input style="text-align: center" type="text" class="form-control" id="dp3" placeholder="انتخاب تاریخ">
                     </div>
                     <div class="col">
                         <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
@@ -323,6 +324,16 @@
 @section("scripts")
 <script src="{{asset("js/navbar.js")}}"></script>
 <script src="{{asset("js/jquery.js")}}"></script>
+<script src="{{asset("js/datepicker.js")}}"></script>
+<script type="text/javascript">
+    $(function() {
+        $("#dp1, #dp2, #dp3").persianDatepicker({
+        cellWidth: 25,
+        cellHeight: 20,
+        fontSize: 15,
+    });
+    });
+</script>
 <script>
     $(document).ready(function() {
         let debt;
@@ -379,10 +390,6 @@
         $("#pay-btn").on("click", function() {
             $("#modal-debt").html($("#debt").html())
         });
-        // $(".check-amount").on("input", function() {
-        //     let separated = separateString($(this).val().replace(/,/g, ""));
-        //     $(this).val(separated);
-        // })
     });
 </script>
 @endsection
