@@ -57,4 +57,31 @@ class User extends Authenticatable
             ->where("status", Order::STATUS_WAITING_USER)
             ->first();
     }
+    public static function debtDetails($userId)
+    {
+        $sumToPay = 0;
+        $minCashPayment = 0;
+        $payedAmount = 0;
+        $debt = 0;
+        $maxCheckPayment = 0;
+        $watingOrder = User::watingOrder($userId);
+        if($watingOrder) {
+            $sumToPay = $watingOrder->details()->sum("payable");
+            $minCashPayment = round(($sumToPay / 3), -3);
+            $maxCheckPayment = $sumToPay - $minCashPayment;
+            $payments = $watingOrder->payments;
+            if($payments) {
+                $payedAmount = $payments->sum("amount");
+            }
+            $debt = $sumToPay - $payedAmount;
+        }
+        $details = [
+            "sumToPay" => $sumToPay,
+             "minCashPayment" => $minCashPayment,
+             "maxCheckPayment" => $maxCheckPayment,
+            "debt" => $debt
+        ];
+        foreach($details as $key => $val) { $details[$key] = fa_number(number_format($val)); }
+        return $details;
+    }
 }

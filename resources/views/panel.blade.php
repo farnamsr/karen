@@ -196,25 +196,21 @@
                               <tr>
                                 <th scope="col">مجموع قیمت سفارشات</th>
                                 <th scope="col">بدهی</th>
-                                @if($payedAmount == 0)
                                 <th scope="col">حد اقل پرداخت نقدی</th>
-                                @endif()
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                @php $minToPay = number_format(round(($sum / 3), -3)); @endphp
-                                <td style="font-size: 20px; letter-spacing: 2px;">{{fa_number(number_format($sum))}}</td>
-                                {{-- <td>{{number_format($sum - $payedAmount)}}</td> --}}
-                                <td id="modal-debt" style="font-size: 20px; letter-spacing: 2px;"></td>
-                                @if($payedAmount == 0)<td>{{$minToPay}}</td>@endif()
+                                <td class="sumToPay" style="font-size: 20px; letter-spacing: 2px;"></td>
+                                <td class="debt text-danger" style="font-size: 20px; letter-spacing: 2px;"></td>
+                                <td class="minToPay" id="modal-debt" style="font-size: 20px; letter-spacing: 2px;"></td>
                               </tr>
                             </tbody>
                           </table>
                           <div class="mb-3 text-center">
                             <span class="">مقدار پرداخت نقدی:</span>
                             <input type="text" class="form-control mt-2 text-center" id="pay-amount"
-                            placeholder="" value="@if($payedAmount == 0) {{$minToPay}} @endif()"
+                            placeholder="" value=""
                              style="letter-spacing: 3px; font-size: 20px;">
                           </div>
                           <div class="d-grid gap-2 col-6 mx-auto  w-100">
@@ -247,18 +243,15 @@
                             <thead>
                               <tr>
                                 <th scope="col">مجموع قیمت سفارشات</th>
+                                <th scope="col">حد اکثر مبلغ مجاز پرداخت در قالب چک</th>
                                 <th scope="col">بدهی</th>
-                                @if($payedAmount == 0)
-                                <th scope="col">حد اقل پرداخت نقدی</th>
-                                @endif()
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                @php $minToPay = number_format(round(($sum / 3), -3)); @endphp
-                                <td style="font-size: 20px; letter-spacing: 3px; font-weight: bold">{{fa_number(number_format($sum))}}</td>
-                                <td class="text-danger" style="font-size: 20px; letter-spacing: 3px; font-weight: bold">{{fa_number(number_format($sum - $payedAmount))}}</td>
-                                @if($payedAmount == 0)<td>{{$minToPay}}</td>@endif()
+                                <td style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
+                                <td style="font-size: 20px; letter-spacing: 3px; font-weight: bold">0</td>
+                                <td class="text-danger" style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
                               </tr>
                             </tbody>
                           </table>
@@ -339,12 +332,17 @@
         function getDebt() {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: "{{route('debt')}}",
+                url: "{{route('debt-details')}}",
                 type:"GET",
                 async:false
             }).done(function(resp) {
+                let details = resp['debt_details'];
                 if(resp["result"] == true) {
-                    debt = resp['debt'];
+                    $("#debt").html(details['debt']);
+                    $(".sumToPay").html(details['sumToPay']);
+                    $(".minToPay").html(details['minCashPayment']);
+                    $(".debt").html(details['debt']);
+                    console.log(resp);
                 }
             });
         }
@@ -385,7 +383,8 @@
             $(this).val(separated);
         });
         $("#pay-btn").on("click", function() {
-            $("#modal-debt").html($("#debt").html())
+
+            // $("#modal-debt").html($("#debt").html())
         });
     });
 </script>
