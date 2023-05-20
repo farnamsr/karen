@@ -47,7 +47,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
-
+    public function checks()
+    {
+        return $this->hasMany(CheckDetail::class);
+    }
     public static function watingOrder($userId)
     {
         return Order::where("user_id", $userId)

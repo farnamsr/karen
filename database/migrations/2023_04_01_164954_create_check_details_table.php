@@ -16,7 +16,10 @@ return new class extends Migration
             $table->bigInteger("order_id");
             $table->string("amount", 16);
             $table->string("tracking_code", 32);
-            $table->timestamps();
+            $table->tinyInteger("status")->default(0);
+            $table->bigInteger("due_date")->unsigned();
+            $table->bigInteger("created_at")->unsigned();
+            $table->bigInteger("updated_at")->unsigned();
         });
     }
 
