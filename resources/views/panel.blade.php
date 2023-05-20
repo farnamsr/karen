@@ -256,15 +256,12 @@
                             <tbody>
                               <tr>
                                 @php $minToPay = number_format(round(($sum / 3), -3)); @endphp
-                                <td>{{number_format($sum)}}</td>
-                                <td>{{number_format($sum - $payedAmount)}}</td>
+                                <td style="font-size: 20px; letter-spacing: 3px; font-weight: bold">{{fa_number(number_format($sum))}}</td>
+                                <td class="text-danger" style="font-size: 20px; letter-spacing: 3px; font-weight: bold">{{fa_number(number_format($sum - $payedAmount))}}</td>
                                 @if($payedAmount == 0)<td>{{$minToPay}}</td>@endif()
                               </tr>
                             </tbody>
                           </table>
-                          {{-- <div class="d-grid gap-2 col-6 mx-auto  w-100">
-                            <button id="pay" class="btn btn-success" type="button">ثبت چک ها</button>
-                          </div> --}}
                     </div>
                 </div>
                 <div class="h4 text-center mt-3">مشخصات چک ها</div>
@@ -328,10 +325,10 @@
 <script type="text/javascript">
     $(function() {
         $("#dp1, #dp2, #dp3").persianDatepicker({
-        cellWidth: 25,
-        cellHeight: 20,
-        fontSize: 15,
-    });
+            cellWidth: 25,
+            cellHeight: 20,
+            fontSize: 15,
+        });
     });
 </script>
 <script>
