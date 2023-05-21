@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -64,6 +65,7 @@ class User extends Authenticatable
         $payedAmount = 0;
         $debt = 0;
         $maxCheckPayment = 0;
+        $isMinCashPayed = false;
         $watingOrder = User::watingOrder($userId);
         if($watingOrder) {
             $sumToPay = $watingOrder->details()->sum("payable");
@@ -72,16 +74,17 @@ class User extends Authenticatable
             $payments = $watingOrder->payments;
             if($payments) {
                 $payedAmount = $payments->sum("amount");
+                if($payedAmount >= $minCashPayment) { $isMinCashPayed = true; }
             }
             $debt = $sumToPay - $payedAmount;
         }
         $details = [
-            "sumToPay" => $sumToPay,
-             "minCashPayment" => $minCashPayment,
-             "maxCheckPayment" => $maxCheckPayment,
-            "debt" => $debt
+            "sumToPay" => fa_number(number_format($sumToPay)),
+             "minCashPayment" => fa_number(number_format($minCashPayment)),
+             "maxCheckPayment" => fa_number(number_format($maxCheckPayment)),
+             "debt" => fa_number(number_format($debt)),
+             "isMinCashPayed" => $isMinCashPayed
         ];
-        foreach($details as $key => $val) { $details[$key] = fa_number(number_format($val)); }
         return $details;
     }
 }

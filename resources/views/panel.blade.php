@@ -46,7 +46,7 @@
                     <div class="h6 mt-3 text-center">پرداخت و تکمیل سفارشات</div>
                     <div class="btn-group w-100 mt-2" role="group" aria-label="Basic example">
                         <button id="pay-btn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pay-modal">پرداخت نقدی</button>
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#check-modal">ثبت چک ها</button>
+                        <button id="btn-checks" type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#check-modal">ثبت چک ها</button>
                       </div>
                       <div class="info-text mt-3 text-center">
                         <i class='bx bx-info-circle text-primary'></i>
@@ -196,14 +196,14 @@
                               <tr>
                                 <th scope="col">مجموع قیمت سفارشات</th>
                                 <th scope="col">بدهی</th>
-                                <th scope="col">حد اقل پرداخت نقدی</th>
+                                <th id="minToPayTh" scope="col">حد اقل پرداخت نقدی</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
                                 <td class="sumToPay" style="font-size: 20px; letter-spacing: 2px;"></td>
                                 <td class="debt text-danger" style="font-size: 20px; letter-spacing: 2px;"></td>
-                                <td class="minToPay" id="modal-debt" style="font-size: 20px; letter-spacing: 2px;"></td>
+                                <td class="minToPay" id="minToPayTd" style="font-size: 20px; letter-spacing: 2px;"></td>
                               </tr>
                             </tbody>
                           </table>
@@ -249,57 +249,57 @@
                             </thead>
                             <tbody>
                               <tr>
-                                <td style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
-                                <td style="font-size: 20px; letter-spacing: 3px; font-weight: bold">0</td>
-                                <td class="text-danger" style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
+                                <td class="sumToPay" style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
+                                <td id="checkMax" style="font-size: 20px; letter-spacing: 3px; font-weight: bold">0</td>
+                                <td  class="text-danger debt" style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
                               </tr>
                             </tbody>
                           </table>
                     </div>
                 </div>
                 <div class="h4 text-center mt-3">مشخصات چک ها</div>
-                <div class="row mt-4">
+                <div class="row mt-4 check-row">
                     <div class="col">
-                        <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="">
+                        <input type="text" class="form-control text-center tracking-code" placeholder="شماره صیادی" aria-label="">
                     </div>
                     <div class="col">
                         <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
-                        <input style="text-align: center" type="text" class="form-control" id="dp1" placeholder="انتخاب تاریخ">
+                        <input style="text-align: center" type="text" class="form-control due-date" id="dp1" placeholder="انتخاب تاریخ">
                     </div>
                     <div class="col">
-                        <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
+                        <button id="pay" class="btn btn-outline-primary w-100 add-check" type="button">ثبت</button>
                     </div>
                 </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3 check-row">
                     <div class="col">
-                        <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="">
+                        <input type="text" class="form-control text-center tracking-code" placeholder="شماره صیادی" aria-label="">
                     </div>
                     <div class="col">
                         <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
-                        <input style="text-align: center" type="text" class="form-control" id="dp2" placeholder="انتخاب تاریخ">
+                        <input style="text-align: center" type="text" class="form-control due-date" id="dp2" placeholder="انتخاب تاریخ">
                     </div>
                     <div class="col">
-                        <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
+                        <button id="pay" class="btn btn-outline-primary w-100 add-check" type="button">ثبت</button>
                     </div>
                 </div>
 
-                <div class="row mt-3 mb-3">
+                <div class="row mt-3 mb-3 check-row">
                     <div class="col">
-                        <input type="text" class="form-control text-center" placeholder="شماره صیادی" aria-label="First name">
+                        <input type="text" class="form-control text-center tracking-code" placeholder="شماره صیادی" aria-label="First name">
                     </div>
                     <div class="col">
                         <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
                     </div>
                     <div class="col">
-                        <input style="text-align: center" type="text" class="form-control" id="dp3" placeholder="انتخاب تاریخ">
+                        <input style="text-align: center" type="text" class="form-control due-date" id="dp3" placeholder="انتخاب تاریخ">
                     </div>
                     <div class="col">
-                        <button id="pay" class="btn btn-outline-primary w-100" type="button">ثبت</button>
+                        <button id="pay" class="btn btn-outline-primary w-100 add-check" type="button">ثبت</button>
                     </div>
                 </div>
             </div>
@@ -315,6 +315,7 @@
 <script src="{{asset("js/navbar.js")}}"></script>
 <script src="{{asset("js/jquery.js")}}"></script>
 <script src="{{asset("js/datepicker.js")}}"></script>
+<script src="{{asset("js/sweet.js")}}"></script>
 <script type="text/javascript">
     $(function() {
         $("#dp1, #dp2, #dp3").persianDatepicker({
@@ -342,6 +343,14 @@
                     $(".sumToPay").html(details['sumToPay']);
                     $(".minToPay").html(details['minCashPayment']);
                     $(".debt").html(details['debt']);
+                    $("#checkMax").html(details["maxCheckPayment"]);
+                    if(details["isMinCashPayed"] == false) {
+                        $("#pay-amount").val(details["minCashPayment"]);
+                        $("#minToPayTh, #minToPayTd").show();
+                    }
+                    else{
+                        $("#minToPayTh, #minToPayTd").hide();
+                    }
                     console.log(resp);
                 }
             });
@@ -368,7 +377,7 @@
                 data: {
                     amount: $("#pay-amount").val().replace(/,/g, ""),
                     type: 1, // cash payment type
-                    status: 1,
+                    payment_status: 1,
                     order_id: "{{$notPayedOrders[0]['order_id'] ?? null}}"
                 }
             }).done(function(resp) {
@@ -377,14 +386,67 @@
                     $("#debt").html(debt);
                 }
             });
-        })
+        });
+
         $("#pay-amount, .check-amount").on("input", function(e) {
             let separated = separateString($(this).val().replace(/,/g, ""));
             $(this).val(separated);
         });
-        $("#pay-btn").on("click", function() {
 
-            // $("#modal-debt").html($("#debt").html())
+        $("#pay-btn, #btn-checks").on("click", function() {
+            getDebt();
+        });
+
+        $(".add-check").on("click", function() {
+            let row = $(this).parents()[1];
+            let trackingCode = $(row).find(".tracking-code").val();
+            let amount = $(row).find(".check-amount").val();
+            let dueDate = $(row).find(".due-date").val();
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('add-check')}}",
+                type:"POST",
+                data:{
+                    order_id:"{{$notPayedOrders[0]['order_id']}}",
+                    tracking_code:trackingCode,
+                    amount:amount,
+                    duedate:dueDate,
+                    payment_type:2
+                }
+            }).done(function(resp) {
+                if(resp["result"] == true) {
+                    $(row).find("input, button").prop("disabled", true);
+                    getDebt();
+                    Swal.fire(
+                        'ثبت موفق !',
+                        `چک با شماره صیادی ${trackingCode} با موفقیت ثبت شد.`,
+                        'success'
+                    )
+                }
+            });
+        });
+
+        $("#btn-checks").on("click", function() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('has-wating')}}",
+                type:"GET",
+            }).done(function(resp) {
+                if(resp["hasWating"] == true ) {
+                    let len = resp["checks"].length;
+                    let checkRows = $(".check-row");
+                    let checks = resp["checks"];
+                    if(len > 0) {
+                        for(let i = 0; i < len; ++i) {
+                            let row = checkRows[i];
+                            $(row).find("input, button").prop("disabled", true);
+                            $(row).find(".tracking-code").val(checks[i]["tracking_code"]);
+                            $(row).find(".check-amount").val(checks[i]["amount"]);
+                            $(row).find(".due-date").val(checks[i]["due_date"]);
+                        }
+                    }
+                }
+            });
         });
     });
 </script>
