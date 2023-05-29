@@ -42,7 +42,9 @@ class Product extends Model
     public static function products($cats = [])
     {
         $cats = count($cats) > 0 ? $cats : Category::all()->pluck("id");
-        $products = Product::whereIn("category_id", $cats)->simplePaginate(3);
+        $products = Product::whereIn("category_id", $cats)
+        ->orderBy("created_at", "desc")
+        ->simplePaginate(12);
         foreach($products as $product) {
             $image = $product->images()->first();
             $imageSrc = asset("storage/products/{$image->product_id}_{$image->id}_{$image->created_at}.{$image->ext}");

@@ -218,6 +218,37 @@
               </div>`;
         }
 
+        function reloadCats() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url:"{{route('cats')}}",
+                type:"GET",
+            }).done(function(resp) {
+                let cats = resp["cats"];
+                $("#cat").find("option").remove();
+                $("#cat").append(`<option selected value="" disabled="disabled">انتخاب دسته بندی محصول</option>`);
+                $(cats).each(function() {
+                    $("#cat").append(`<option value="${this['id']}">${this['name']}</option>`);
+                });
+            })
+        }
+        function reloadProducts() {
+            nextPage = 2;
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url:"{{route('dashboard-products')}}",
+                type:"GET",
+            }).done(function(resp) {
+                $("#cards-col").empty();
+                let cards = resp["products"]['data'];
+                    $(cards).each(function() {
+                        let card = productCard(this['id'], this['name'],
+                            this['description'], this['price'], this['img_path']);
+                        $("#cards-col").append(card);
+                    });
+            })
+        }
+
         $("#submit-product").on("click", function() {
             $(this).prop("disabled", true).text("در حال ذخیره...");
             let fd = new FormData($("#product-form")[0]);
@@ -243,6 +274,7 @@
                         showConfirmButton: false,
                         timer: 2000
                     })
+                    reloadProducts();
                 }
             });
         })
@@ -267,6 +299,7 @@
                             style="cursor: pointer"></i></td>
                             </tr>`;
                 $("#cats-body").append(row);
+                reloadCats();
             });
         });
 
@@ -278,7 +311,18 @@
                 type:"POST",
                 data:{catId: $(this).attr("id")}
             }).done(function(resp) {
-                $(row).remove();
+                if(resp["result"] != false) {
+                    $(row).remove();
+                    reloadCats();
+                }
+                else{
+                    Swal.fire({
+                        title:"خطا در حذف",
+                        html:"دسته بندی مورد نظر به دلیل داشتن زیر محصول قابل حذف نیست!",
+                        icon: 'error',
+                        showConfirmButton: true,
+                    })
+                }
             });
         });
 

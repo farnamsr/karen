@@ -20,7 +20,7 @@ class DashboardController extends Controller
             ]);
         }
         else{
-            $cats = $this->cats();
+            $cats = $this->cats($request, false);
             return view("dashboard.products", compact("cats", "products"));
         }
     }
@@ -60,12 +60,27 @@ class DashboardController extends Controller
     }
     public function deleteCat(Request $request)
     {
-        Category::where("id", $request->catId)->delete();
-        return response()->json(["result" => true]);
+        $response = [];
+        $cat = Category::where("id", $request->catId)->first();
+        if($cat->products()->count() > 0) {
+            $response["result"] = false;
+        }
+        else{
+            $cat->delete();
+            $response["result"] = true;
+        }
+        return response()->json($response);
     }
-    public function cats()
+    public function cats(Request $request, $ajax = true)
     {
-        return Category::all();
+        $cats = Category::all();
+        if($ajax) {
+            return response()->json([
+                "result" => true,
+                "cats" => $cats
+            ]);
+        }
+        return $cats;
     }
 
 

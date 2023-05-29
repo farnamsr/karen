@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaymentRequest;
 use App\Models\CheckDetail;
 use App\Models\Order;
 use App\Models\Payment;
@@ -14,27 +15,36 @@ class PanelController extends Controller
 {
     public function panel()
     {
-        $records = [];
-        $watingOrder = User::watingOrder(auth()->id());
-        if($watingOrder) {
-            $details = $watingOrder->details();
-            $records = $details->orderBy("created_at")->paginate(5);
-        }
         return view("panel", [
             "user" => auth()->user(),
-            "notPayedOrders" => $records,
         ]);
     }
 
     public function payment(Request $request)
     {
-        $request['amount'] = en_number($request['amount']);
+        $minPayed = false;
+        $watingOrder = User::watingOrder(auth()->id());
         $payment = Payment::pay(
             $request->amount, $request->type,
             $request->payment_status, $request->order_id
         );
         if($payment) {
-            return response()->json(["result" => true]);
+            if ($watingOrder) {
+                $sumToPay = User::watingSumToPay($watingOrder);
+                $minToPay = User::minCashPayment($sumToPay);
+                $payed = $watingOrder->payments()
+                ->where("type", Payment::TYPE_CASH)
+                ->sum("amount");
+                if ($payed >= $minToPay) {
+                    $watingOrder->status = Order::STATUS_MIN_PAIED;
+                    $watingOrder->save();
+                    $minPayed = true;
+                }
+            }
+            return response()->json([
+                "result" => true,
+                "minPayed" => $minPayed
+            ]);
         }
     }
 
@@ -78,7 +88,7 @@ class PanelController extends Controller
         $order = User::watingOrder(auth()->id());
         $checks = [];
         if($order) {
-            $hasWatingOrder = true;
+            $hasWatingOrder = $order->id;
             $checks = $order->checks()->orderBy("created_at")->get();
         }
         return response()->json([
@@ -88,4 +98,40 @@ class PanelController extends Controller
         ]);
     }
 
+    private function faFormat($records)
+    {
+        foreach ($records as $record) {
+            $record["unit_price"] = fa_number(number_format($record["unit_price"]));
+            $record["payable"] = fa_number(number_format($record["payable"]));
+            $record["count"] = fa_number(number_format($record["count"]));
+        }
+        return $records;
+    }
+    public function waitings(Request $request)
+    {
+        $records = [];
+        $orderId = false;
+        $invoiceNumber = false;
+        $watingOrder = User::watingOrder(auth()->id());
+        if($watingOrder) {
+            $orderId = $watingOrder->id;
+            $invoiceNumber = fa_number($watingOrder->invoice_number);
+            $details = $watingOrder->details()->with("product");
+            $records = $this->faFormat($details->orderBy("created_at")->get());
+        }
+        return response()->json([
+            "result" => true,
+            "records" => $records,
+            "orderId" => $orderId,
+            "invoiceNumber" => $invoiceNumber
+        ]);
+    }
+    public function pendings(Request $request)
+    {
+        $records = $this->faFormat(User::notDeliveredPendings(auth()->id()));
+        return response()->json([
+            "result" => true,
+            "records" => $records
+        ]);
+    }
 }

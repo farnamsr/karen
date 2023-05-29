@@ -58,19 +58,56 @@ class User extends Authenticatable
             ->where("status", Order::STATUS_WAITING_USER)
             ->first();
     }
+    public static function pendingOrders($userId)
+    {
+        return Order::where("user_id", $userId)
+            ->where("status", Order::STATUS_MIN_PAIED);
+    }
+    public static function deliveredPendings($userId)
+    {
+        $pendings = self::pendingOrders($userId);
+        return $pendings->whereHas("details", function($query) {
+            $query->whereNotNull("delivery_time");
+        })->get();
+    }
+    public static function notDeliveredPendings($userId)
+    {
+        $pendings = self::pendingOrders($userId);
+        return $pendings->whereHas("details", function($query) {
+            $query->whereNull("delivery_time");
+        })->get();
+    }
+    public static function watingSumToPay($watingOrder)
+    {
+        return $watingOrder->details()->sum("payable");
+    }
+    public static function minCashPayment($watingSumToPay)
+    {
+        return round(($watingSumToPay / 3), -3);
+    }
     public static function debtDetails($userId)
     {
         $sumToPay = 0;
         $minCashPayment = 0;
         $payedAmount = 0;
         $debt = 0;
-        $maxCheckPayment = 0;
         $isMinCashPayed = false;
+        $user = User::where("id", $userId)->first();
         $watingOrder = User::watingOrder($userId);
+
+        $totalPayable = $user
+            ->orders()->with("details")->get()
+            ->flatMap(function($order) {
+                return $order->details;
+            })->sum("payable");
+        $totalPayed = $user->orders()->with("payments")->get()
+            ->flatMap(function($order) {
+                return $order->payments;
+            })->sum("amount");
+
         if($watingOrder) {
-            $sumToPay = $watingOrder->details()->sum("payable");
-            $minCashPayment = round(($sumToPay / 3), -3);
-            $maxCheckPayment = $sumToPay - $minCashPayment;
+            $sumToPay = self::watingSumToPay($watingOrder);
+            $minCashPayment = self::minCashPayment($sumToPay);
             $payments = $watingOrder->payments;
             if($payments) {
                 $payedAmount = $payments->sum("amount");
@@ -81,10 +118,11 @@ class User extends Authenticatable
         $details = [
             "sumToPay" => fa_number(number_format($sumToPay)),
              "minCashPayment" => fa_number(number_format($minCashPayment)),
-             "maxCheckPayment" => fa_number(number_format($maxCheckPayment)),
              "debt" => fa_number(number_format($debt)),
-             "isMinCashPayed" => $isMinCashPayed
+             "isMinCashPayed" => $isMinCashPayed,
+             "totalDebt" => fa_number(number_format($totalPayable - $totalPayed))
         ];
         return $details;
     }
+
 }

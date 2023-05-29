@@ -7,7 +7,7 @@ use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Http\Request;
-
+use Morilog\Jalali\Jalalian;
 class ShopController extends Controller
 {
     public function shop(Request $request)
@@ -43,6 +43,8 @@ class ShopController extends Controller
                     "user_id" => auth()->user()->id,
                     "status" => Order::STATUS_WAITING_USER
                 ]);
+                $order->invoice_number = Jalalian::now()->format("Ymd") . $order->id;
+                $order->save();
             }
             $details = OrderDetail::create([
                 "order_id" => $order->id,

@@ -38,16 +38,11 @@
                     <button class="btn btn-outline-danger w-100 mt-4" type="button">ثبت سفارش اختصاصی</button>
                     <div class="debt-cont mt-3">
                         <div>مجموع بدهی:</div>
-                        <div class="text-center text-secondary" style="font-size: 30px; letter-spacing: 2px" id="debt"></div>
+                        <div class="text-center text-secondary" style="font-size: 30px; letter-spacing: 2px" id="totalDebt"></div>
                     </div>
                     <div class="line">
                         <hr class="mt-2">
                     </div>
-                    <div class="h6 mt-3 text-center">پرداخت و تکمیل سفارشات</div>
-                    <div class="btn-group w-100 mt-2" role="group" aria-label="Basic example">
-                        <button id="pay-btn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pay-modal">پرداخت نقدی</button>
-                        <button id="btn-checks" type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#check-modal">ثبت چک ها</button>
-                      </div>
                       <div class="info-text mt-3 text-center">
                         <i class='bx bx-info-circle text-primary'></i>
                         <small class="text-secondary">مشتری گرامی جهت تکمیل سفارشات ثبت شده حد اقل یک سوم از هزینه بصورت نقد و
@@ -113,29 +108,6 @@
                   </ul>
                   <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                        <table class="table table-striped table-hover mt-4 text-center">
-                            <thead>
-                                <tr>
-                                  <th scope="col">#</th>
-                                  <th scope="col">نام محصول</th>
-                                  <th scope="col">تعداد</th>
-                                  <th scope="col">قیمت واحد (تومان)</th>
-                                  <th scope="col">قابل پرداخت</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                @for ($i = 0; $i < count($notPayedOrders); $i++)
-                                @php $item = $notPayedOrders[$i] @endphp
-                                <tr>
-                                    <td>{{$i + 1}}</td>
-                                    <td>{{$item->product->name}}</td>
-                                    <td>{{$item->count}}</td>
-                                    <td>{{number_format($item->unit_price)}}</td>
-                                    <td>{{number_format($item->payable)}}</td>
-                                </tr>
-                                @endfor
-                              </tbody>
-                          </table>
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
                     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
@@ -328,7 +300,10 @@
 <script>
     $(document).ready(function() {
         let debt;
+        let watingOrderId;
         getDebt();
+        getWatings();
+        getPendings();
         $("#debt").html(debt);
         function getDebt() {
             $.ajax({
@@ -339,7 +314,7 @@
             }).done(function(resp) {
                 let details = resp['debt_details'];
                 if(resp["result"] == true) {
-                    $("#debt").html(details['debt']);
+                    $("#totalDebt").html(details['totalDebt']);
                     $(".sumToPay").html(details['sumToPay']);
                     $(".minToPay").html(details['minCashPayment']);
                     $(".debt").html(details['debt']);
@@ -353,6 +328,81 @@
                     }
                     console.log(resp);
                 }
+            });
+        }
+        function getWatings() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('waitings')}}",
+                type:"GET"
+            }).done(function(resp) {
+                if(resp["orderId"] != false) {
+                    watingOrderId = resp["orderId"]
+                    let table = `<div class="d-flex justify-content-between">
+                                 <div class="h5 mt-4">شماره فاکتور: &nbsp;&nbsp;<span class="text-danger">${resp["invoiceNumber"]}</span></div>
+                                 <div class="mt-5"><button class="btn btn-primary btn-sm" id="pay-btn" type="button" data-bs-toggle="modal" data-bs-target="#pay-modal">تسویه نقدی سفارش</button></div>
+                                </div>
+                                <table class="table table-striped table-hover mt-4 text-center">
+                            <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">نام محصول</th>
+                                  <th scope="col">تعداد</th>
+                                  <th scope="col">قیمت واحد (تومان)</th>
+                                  <th scope="col">قابل پرداخت</th>
+                                </tr>
+                              </thead>
+                              <tbody>`;
+                    $(resp['records']).each(function() {
+                        let row = `<tr>`;
+                            row += `<td>${this['id']}</td>`;
+                            row += `<td>${this['product']['name']}</td>`;
+                            row += `<td>${this['count']}</td>`;
+                            row += `<td>${this['unit_price']}</td>`;
+                            row += `<td>${this['payable']}</td>`;
+                            row += `</tr>`;
+                        table += row + `</tr>`;
+                    })
+                    table += `</tbody></table>`;
+                    $("#home").html(table);
+                }
+                else{
+                    $("#home").html(`<div class="mt-5 text-center text-secondary h5">سفارشی یافت نشد</div>`);
+                }
+            });
+        }
+        function getPendings() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('not-delivered-pendings')}}",
+                type:"GET"
+            }).done(function(resp) {
+                console.log(resp);
+                // if(resp["result"] == true) {
+                //     let table = `<table class="table table-striped table-hover mt-4 text-center">
+                //             <thead>
+                //                 <tr>
+                //                   <th scope="col">#</th>
+                //                   <th scope="col">نام محصول</th>
+                //                   <th scope="col">تعداد</th>
+                //                   <th scope="col">قیمت واحد (تومان)</th>
+                //                   <th scope="col">قابل پرداخت</th>
+                //                 </tr>
+                //               </thead>
+                //               <tbody>`;
+                //     $(resp['records']).each(function() {
+                //         let row = `<tr>`;
+                //             row += `<td>${this['id']}</td>`;
+                //             row += `<td>${this['product']['name']}</td>`;
+                //             row += `<td>${this['count']}</td>`;
+                //             row += `<td>${this['unit_price']}</td>`;
+                //             row += `<td>${this['payable']}</td>`;
+                //             row += `</tr>`;
+                //         table += row + `</tr>`;
+                //     })
+                //     table += `</tbody></table>`;
+                //     $("#home").html(table);
+                // }
             });
         }
         function separateString(str) {
@@ -369,6 +419,7 @@
             }
             return separated;
         }
+
         $("#pay").on("click", function() {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -378,12 +429,15 @@
                     amount: $("#pay-amount").val().replace(/,/g, ""),
                     type: 1, // cash payment type
                     payment_status: 1,
-                    order_id: "{{$notPayedOrders[0]['order_id'] ?? null}}"
+                    order_id: watingOrderId
                 }
             }).done(function(resp) {
                 if(resp["result"] == true) {
                     getDebt();
-                    $("#debt").html(debt);
+                    if (resp["minPayed"] == true) {
+                        $("#home").empty();
+                        $("#home").html(`<div class="mt-5 text-center text-secondary h5">سفارشی یافت نشد</div>`);
+                    }
                 }
             });
         });
@@ -393,9 +447,9 @@
             $(this).val(separated);
         });
 
-        $("#pay-btn, #btn-checks").on("click", function() {
+        $(document).on("click","#pay-btn", function() {
             getDebt();
-        });
+        })
 
         $(".add-check").on("click", function() {
             let row = $(this).parents()[1];
@@ -407,7 +461,7 @@
                 url: "{{route('add-check')}}",
                 type:"POST",
                 data:{
-                    order_id:"{{$notPayedOrders[0]['order_id']}}",
+                    order_id:watingOrderId,
                     tracking_code:trackingCode,
                     amount:amount,
                     duedate:dueDate,
@@ -432,7 +486,8 @@
                 url: "{{route('has-wating')}}",
                 type:"GET",
             }).done(function(resp) {
-                if(resp["hasWating"] == true ) {
+                if(resp["hasWating"] != false ) {
+                    watingOrderId = resp["hasWating"];
                     let len = resp["checks"].length;
                     let checkRows = $(".check-row");
                     let checks = resp["checks"];

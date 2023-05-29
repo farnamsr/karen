@@ -45,7 +45,7 @@
                     <p style="padding: 15px;">{{$product->description}}</p>
                 <div class="price-text text-center">
                     <span style="padding: 15px;">قیمت: </span>
-                    <span style="font-size: 20px; font-weight: bold;" class="text-success">{{$product->price}}</span>
+                    <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px;" class="text-success">{{fa_number(number_format($product->price))}}</span>
                     <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
                 </div>
                 <input id="p-count" class="form-control text-center mt-4 w-50 mx-auto" type="text" placeholder="تعداد محصول" aria-label=".form-control-sm example">

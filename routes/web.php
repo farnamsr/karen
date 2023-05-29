@@ -48,6 +48,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post("/check", [PanelController::class, "addCheck"])->name("add-check");
     Route::get("/debt-details", [PanelController::class, "debtDetails"])->name("debt-details");
     Route::get("/has-wating", [PanelController::class, "hasWatingOrder"])->name("has-wating");
+    Route::get("/waitings", [PanelController::class, "waitings"])->name("waitings");
+    Route::get("/not-delivered-pendings", [PanelController::class, "pendings"])->name("not-delivered-pendings");
 });
 
 
