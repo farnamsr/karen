@@ -146,4 +146,19 @@ class PanelController extends Controller
             "records" => $records
         ]);
     }
+    public function orderDetails(Request $request)
+    {
+        $order = Order::where("id", $request->order_id)->first();
+        $details = $order->details()->with("product")->get();
+        foreach($details as $detail) {
+            $detail["unit_price"] = fa_number(number_format($detail["unit_price"]));
+            $detail["payable"] = fa_number(number_format($detail["payable"]));
+            $detail["count"] = fa_number($detail["count"]);
+        }
+        return response()->json([
+            "result" => true,
+            "records" => $details,
+            "invoice_number" => fa_number($order->invoice_number)
+        ]);
+    }
 }

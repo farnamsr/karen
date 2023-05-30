@@ -283,6 +283,26 @@
       </div>
     </div>
   </div>
+
+<button id="dtl-modal-btn" style="display: none;" data-bs-toggle="modal" data-bs-target="#dtl-modal"></button>
+  <!-- Modal -->
+  <div class="modal fade" id="dtl-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="dtl-modal-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="dtl-modal-title"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="dtl-modal-body">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section("scripts")
@@ -363,7 +383,7 @@
                             row += `<td>${this['unit_price']}</td>`;
                             row += `<td>${this['payable']}</td>`;
                             row += `</tr>`;
-                        table += row + `</tr>`;
+                        table += row;
                     })
                     table += `</tbody></table>`;
                     $("#home").html(table);
@@ -398,7 +418,7 @@
                             row += `<td>${this['invoice_number']}</td>`;
                             row += `<td>${this['payable']}</td>`;
                             row += `<td>${this['debt']}</td>`;
-                            row += `<td style='cursor:pointer;' class='text-primary'>مشاهده</td>`;
+                            row += `<td id='${this['id']}' style='cursor:pointer;' class='text-primary dtl-btn'>مشاهده</td>`;
                             row += `<td style='cursor:pointer;' class='text-primary'>ثبت</td>`;
                             row += `</tr>`;
                         table += row + `</tr>`;
@@ -507,6 +527,48 @@
                 }
             });
         });
+
+        $(document).on("click", ".dtl-btn", function() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('orderDetails')}}",
+                type:"GET",
+                data:{order_id: $(this).attr("id")}
+            }).done(function(resp) {
+                if(resp["result"] == true) {
+                    let table = `<table class="table table-striped table-hover mt-4 text-center">
+                            <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">نام محصول</th>
+                                  <th scope="col">تعداد</th>
+                                  <th scope="col">قیمت واحد (تومان)</th>
+                                  <th scope="col">قابل پرداخت</th>
+                                  <th scope="col">تاریخ تحویل</th>
+                                </tr>
+                              </thead>
+                              <tbody>`;
+                    $(resp["records"]).each(function() {
+                        let row = `<tr>`;
+                            row += `<td>${this['id']}</td>`;
+                            row += `<td>${this['product']['name']}</td>`;
+                            row += `<td>${this['count']}</td>`;
+                            row += `<td>${this['unit_price']}</td>`;
+                            row += `<td>${this['payable']}</td>`;
+                            if (this['delivery_time'] == null) {
+                                row += `<td class='text-secondary'>نامشخص</td>`;
+                            }
+                            else{
+                                row += `<td>${this['delivery_time']}</td>`;
+                            }
+                            table += row;
+                    });
+                    $("#dtl-modal-title").html(`جزئیات سفارش &nbsp; <span class='text-danger'>${resp['invoice_number']}<span>`)
+                    $("#dtl-modal-body").html(table);
+                }
+            });
+            $("#dtl-modal-btn").click();
+        })
     });
 </script>
 @endsection
