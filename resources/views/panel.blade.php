@@ -109,7 +109,9 @@
                   <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     </div>
-                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+                    </div>
                     <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
                   </div>
                   {{-- <div class="list-group mt-5">
@@ -377,32 +379,33 @@
                 url: "{{route('not-delivered-pendings')}}",
                 type:"GET"
             }).done(function(resp) {
-                console.log(resp);
-                // if(resp["result"] == true) {
-                //     let table = `<table class="table table-striped table-hover mt-4 text-center">
-                //             <thead>
-                //                 <tr>
-                //                   <th scope="col">#</th>
-                //                   <th scope="col">نام محصول</th>
-                //                   <th scope="col">تعداد</th>
-                //                   <th scope="col">قیمت واحد (تومان)</th>
-                //                   <th scope="col">قابل پرداخت</th>
-                //                 </tr>
-                //               </thead>
-                //               <tbody>`;
-                //     $(resp['records']).each(function() {
-                //         let row = `<tr>`;
-                //             row += `<td>${this['id']}</td>`;
-                //             row += `<td>${this['product']['name']}</td>`;
-                //             row += `<td>${this['count']}</td>`;
-                //             row += `<td>${this['unit_price']}</td>`;
-                //             row += `<td>${this['payable']}</td>`;
-                //             row += `</tr>`;
-                //         table += row + `</tr>`;
-                //     })
-                //     table += `</tbody></table>`;
-                //     $("#home").html(table);
-                // }
+                if(resp["result"] == true) {
+                    let table = `<table class="table table-striped table-hover mt-4 text-center">
+                            <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">شماره فاکتور</th>
+                                  <th scope="col">قابل پرداخت</th>
+                                  <th scope="col">بدهی</th>
+                                  <th scope="col">جزئیات</th>
+                                  <th scope="col">ثبت چک</th>
+                                </tr>
+                              </thead>
+                              <tbody>`;
+                    $(resp['records']).each(function() {
+                        let row = `<tr>`;
+                            row += `<td>${this['id']}</td>`;
+                            row += `<td>${this['invoice_number']}</td>`;
+                            row += `<td>${this['payable']}</td>`;
+                            row += `<td>${this['debt']}</td>`;
+                            row += `<td style='cursor:pointer;' class='text-primary'>مشاهده</td>`;
+                            row += `<td style='cursor:pointer;' class='text-primary'>ثبت</td>`;
+                            row += `</tr>`;
+                        table += row + `</tr>`;
+                    })
+                    table += `</tbody></table>`;
+                    $("#profile").html(table);
+                }
             });
         }
         function separateString(str) {
@@ -434,6 +437,7 @@
             }).done(function(resp) {
                 if(resp["result"] == true) {
                     getDebt();
+                    getPendings();
                     if (resp["minPayed"] == true) {
                         $("#home").empty();
                         $("#home").html(`<div class="mt-5 text-center text-secondary h5">سفارشی یافت نشد</div>`);

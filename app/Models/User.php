@@ -63,19 +63,21 @@ class User extends Authenticatable
         return Order::where("user_id", $userId)
             ->where("status", Order::STATUS_MIN_PAIED);
     }
+    // delivered pendings: the orders with some delivered products and som pending products
     public static function deliveredPendings($userId)
     {
         $pendings = self::pendingOrders($userId);
-        return $pendings->whereHas("details", function($query) {
-            $query->whereNotNull("delivery_time");
-        })->get();
+        return $pendings->with(["details" => function($query) {
+            $query->where("status", OrderDetail::STATUS_DELIVERED);
+        }])->get();
     }
     public static function notDeliveredPendings($userId)
     {
+        $payable = 0;
         $pendings = self::pendingOrders($userId);
-        return $pendings->whereHas("details", function($query) {
-            $query->whereNull("delivery_time");
-        })->get();
+        return $pendings->with(["payments","details" => function($query) {
+            $query->where("status", OrderDetail::STATUS_PENDING);
+        }])->get();
     }
     public static function watingSumToPay($watingOrder)
     {

@@ -128,7 +128,19 @@ class PanelController extends Controller
     }
     public function pendings(Request $request)
     {
-        $records = $this->faFormat(User::notDeliveredPendings(auth()->id()));
+        $records = User::notDeliveredPendings(auth()->id());
+        foreach($records as $record) {
+            $payable = 0; $payed = 0;
+            foreach($record['details'] as $dtl) {
+                $payable += $dtl["payable"];
+            }
+            foreach($record['payments'] as $payment) {
+                $payed += $payment["amount"];
+            }
+            $record["payable"] = fa_number(number_format($payable));
+            $record["debt"] = fa_number(number_format($payable - $payed));
+            $record["invoice_number"] = fa_number($record['invoice_number']);
+        }
         return response()->json([
             "result" => true,
             "records" => $records
