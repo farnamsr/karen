@@ -200,7 +200,7 @@
     </div>
   </div>
 
-
+<button id="check-modal-btn" style="display: none" data-bs-toggle="modal" data-bs-target="#check-modal"></button>
   <div class="modal fade" id="check-modal" tabindex="-1" aria-labelledby="check-modal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -217,21 +217,19 @@
                             <thead>
                               <tr>
                                 <th scope="col">مجموع قیمت سفارشات</th>
-                                <th scope="col">حد اکثر مبلغ مجاز پرداخت در قالب چک</th>
                                 <th scope="col">بدهی</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
-                                <td class="sumToPay" style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
-                                <td id="checkMax" style="font-size: 20px; letter-spacing: 3px; font-weight: bold">0</td>
-                                <td  class="text-danger debt" style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
+                                <td id="check-sum-pay" class="sumToPay" style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
+                                <td id="check-debt"  class="text-danger debt" style="font-size: 20px; letter-spacing: 3px; font-weight: bold"></td>
                               </tr>
                             </tbody>
                           </table>
                     </div>
                 </div>
-                <div class="h4 text-center mt-3">مشخصات چک ها</div>
+                <div class="h5 text-center mt-3">ثبت چک جدید</div>
                 <div class="row mt-4 check-row">
                     <div class="col">
                         <input type="text" class="form-control text-center tracking-code" placeholder="شماره صیادی" aria-label="">
@@ -243,37 +241,12 @@
                         <input style="text-align: center" type="text" class="form-control due-date" id="dp1" placeholder="انتخاب تاریخ">
                     </div>
                     <div class="col">
-                        <button id="pay" class="btn btn-outline-primary w-100 add-check" type="button">ثبت</button>
+                        <button class="btn btn-outline-primary w-100 submit-check" type="button">ثبت</button>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-12" id="checks-table">
 
-                <div class="row mt-3 check-row">
-                    <div class="col">
-                        <input type="text" class="form-control text-center tracking-code" placeholder="شماره صیادی" aria-label="">
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
-                    </div>
-                    <div class="col">
-                        <input style="text-align: center" type="text" class="form-control due-date" id="dp2" placeholder="انتخاب تاریخ">
-                    </div>
-                    <div class="col">
-                        <button id="pay" class="btn btn-outline-primary w-100 add-check" type="button">ثبت</button>
-                    </div>
-                </div>
-
-                <div class="row mt-3 mb-3 check-row">
-                    <div class="col">
-                        <input type="text" class="form-control text-center tracking-code" placeholder="شماره صیادی" aria-label="First name">
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
-                    </div>
-                    <div class="col">
-                        <input style="text-align: center" type="text" class="form-control due-date" id="dp3" placeholder="انتخاب تاریخ">
-                    </div>
-                    <div class="col">
-                        <button id="pay" class="btn btn-outline-primary w-100 add-check" type="button">ثبت</button>
                     </div>
                 </div>
             </div>
@@ -323,6 +296,7 @@
     $(document).ready(function() {
         let debt;
         let watingOrderId;
+        let checkOrderId;
         getDebt();
         getWatings();
         getPendings();
@@ -419,7 +393,7 @@
                             row += `<td>${this['payable']}</td>`;
                             row += `<td>${this['debt']}</td>`;
                             row += `<td id='${this['id']}' style='cursor:pointer;' class='text-primary dtl-btn'>مشاهده</td>`;
-                            row += `<td style='cursor:pointer;' class='text-primary'>ثبت</td>`;
+                            row += `<td data-id='${this['id']}' style='cursor:pointer;' class='text-primary add-checks'>ثبت</td>`;
                             row += `</tr>`;
                         table += row + `</tr>`;
                     })
@@ -441,6 +415,68 @@
                 ++counter;
             }
             return separated;
+        }
+        function orderDebt(orderId) {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('order-debt')}}",
+                type:"GET",
+                data:{order_id: orderId}
+            }).done(function(resp) {
+                if(resp['result'] == true) {
+                    $("#check-sum-pay").html(resp['payable']);
+                    $("#check-debt").html(resp['debt']);
+                }
+            })
+        }
+        function getChecks(orderId) {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('has-wating')}}",
+                type:"GET",
+                data:{order_id: orderId}
+            }).done(function(resp) {
+                if(resp["result"] == true ) {
+                    let len = resp["checks"].length;
+                    let checks = resp["checks"];
+                    if(len > 0) {
+                        let table = `<table class="table table-striped table-hover mt-4 text-center">
+                            <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">شماره صیادی</th>
+                                  <th scope="col">مبلغ</th>
+                                  <th scope="col">تاریخ سر رسید</th>
+                                </tr>
+                              </thead>
+                              <tbody>`;
+                        for(let i = 0; i < len; ++i) {
+                            table += `<tr>`;
+                            table += `<td>${i + 1}</td>`;
+                            table += `<td>${checks[i]['tracking_code']}</td>`;
+                            table += `<td>${checks[i]['amount']}</td>`;
+                            table += `<td>${checks[i]['due_date']}</td>`;
+                            table += `</tr>`;
+                        }
+                        table += `</tbody></table>`;
+                        $("#checks-table").html(table);
+                    }
+                    else{
+                        $("#checks-table").html("");
+                    }
+                }
+            });
+        }
+        function getTotalDebt() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('total-debt')}}",
+                type:"GET"
+            }).done(function(resp) {
+                if(resp['result'] == true) {
+                    $("#totalDebt").html(resp['debt']);
+                }
+            })
         }
 
         $("#pay").on("click", function() {
@@ -475,7 +511,7 @@
             getDebt();
         })
 
-        $(".add-check").on("click", function() {
+        $(document).on("click", ".submit-check", function() {
             let row = $(this).parents()[1];
             let trackingCode = $(row).find(".tracking-code").val();
             let amount = $(row).find(".check-amount").val();
@@ -485,7 +521,7 @@
                 url: "{{route('add-check')}}",
                 type:"POST",
                 data:{
-                    order_id:watingOrderId,
+                    order_id:checkOrderId,
                     tracking_code:trackingCode,
                     amount:amount,
                     duedate:dueDate,
@@ -493,37 +529,15 @@
                 }
             }).done(function(resp) {
                 if(resp["result"] == true) {
-                    $(row).find("input, button").prop("disabled", true);
-                    getDebt();
+                    $(".check-row").find("input").val("");
+                    getChecks(checkOrderId);
+                    orderDebt(checkOrderId);
+                    getTotalDebt();
                     Swal.fire(
                         'ثبت موفق !',
                         `چک با شماره صیادی ${trackingCode} با موفقیت ثبت شد.`,
                         'success'
                     )
-                }
-            });
-        });
-
-        $("#btn-checks").on("click", function() {
-            $.ajax({
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: "{{route('has-wating')}}",
-                type:"GET",
-            }).done(function(resp) {
-                if(resp["hasWating"] != false ) {
-                    watingOrderId = resp["hasWating"];
-                    let len = resp["checks"].length;
-                    let checkRows = $(".check-row");
-                    let checks = resp["checks"];
-                    if(len > 0) {
-                        for(let i = 0; i < len; ++i) {
-                            let row = checkRows[i];
-                            $(row).find("input, button").prop("disabled", true);
-                            $(row).find(".tracking-code").val(checks[i]["tracking_code"]);
-                            $(row).find(".check-amount").val(checks[i]["amount"]);
-                            $(row).find(".due-date").val(checks[i]["due_date"]);
-                        }
-                    }
                 }
             });
         });
@@ -568,6 +582,13 @@
                 }
             });
             $("#dtl-modal-btn").click();
+        })
+
+        $(document).on("click", ".add-checks", function() {
+            checkOrderId = $(this).attr("data-id");
+            orderDebt(checkOrderId);
+            getChecks(checkOrderId);
+            $("#check-modal-btn").click();
         })
     });
 </script>

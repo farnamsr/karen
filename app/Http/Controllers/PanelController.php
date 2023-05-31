@@ -28,8 +28,9 @@ class PanelController extends Controller
             $request->amount, $request->type,
             $request->payment_status, $request->order_id
         );
+        $isPending = Order::where("id", $request->order_id)->first()->status == Order::STATUS_MIN_PAIED ? true : false;
         if($payment) {
-            if ($watingOrder) {
+            if ($watingOrder && $request->type == Payment::TYPE_CASH && $isPending != true) {
                 $sumToPay = User::watingSumToPay($watingOrder);
                 $minToPay = User::minCashPayment($sumToPay);
                 $payed = $watingOrder->payments()
@@ -84,16 +85,13 @@ class PanelController extends Controller
 
     public function hasWatingOrder(Request $request)
     {
-        $hasWatingOrder = false;
-        $order = User::watingOrder(auth()->id());
+        $order = Order::where("id", $request->order_id)->first();
         $checks = [];
         if($order) {
-            $hasWatingOrder = $order->id;
             $checks = $order->checks()->orderBy("created_at")->get();
         }
         return response()->json([
             "result" => true,
-            "hasWating" => $hasWatingOrder,
             "checks" => $checks
         ]);
     }
@@ -159,6 +157,25 @@ class PanelController extends Controller
             "result" => true,
             "records" => $details,
             "invoice_number" => fa_number($order->invoice_number)
+        ]);
+    }
+
+    public function getOrderDebt(Request $request)
+    {
+        $result = User::orderDebt($request->order_id);
+        return response()->json([
+            "result" => true,
+            "payable" => fa_number(number_format($result["payable"])),
+            "debt" => fa_number(number_format($result["debt"]))
+        ]);
+    }
+
+    public function getTotalDebt(Request $request)
+    {
+        $debt = User::totalDebt(auth()->user());
+        return response()->json([
+            "result" => true,
+            "debt" => fa_number(number_format($debt))
         ]);
     }
 }

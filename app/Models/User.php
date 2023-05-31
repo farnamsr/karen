@@ -97,15 +97,8 @@ class User extends Authenticatable
         $user = User::where("id", $userId)->first();
         $watingOrder = User::watingOrder($userId);
 
-        $totalPayable = $user
-            ->orders()->with("details")->get()
-            ->flatMap(function($order) {
-                return $order->details;
-            })->sum("payable");
-        $totalPayed = $user->orders()->with("payments")->get()
-            ->flatMap(function($order) {
-                return $order->payments;
-            })->sum("amount");
+        $totalPayable = self::totalPayable($user);
+        $totalPayed = self::totalPayed($user);
 
         if($watingOrder) {
             $sumToPay = self::watingSumToPay($watingOrder);
@@ -125,6 +118,38 @@ class User extends Authenticatable
              "totalDebt" => fa_number(number_format($totalPayable - $totalPayed))
         ];
         return $details;
+    }
+
+    public static function orderDebt($orderId)
+    {
+        $order = Order::where("id", $orderId)->first();
+        $payable = $order->details()->sum("payable");
+        $payed = $order->payments()->sum("amount");
+        $debt = $payable - $payed;
+        return [
+            "debt" => $debt,
+            "payable" => $payable
+        ];
+    }
+
+    public static function totalPayable($user)
+    {
+        return $user->orders()->with("details")->get()->flatMap(function($order) {
+                return $order->details;
+            })->sum("payable");
+    }
+
+    public static function totalPayed($user)
+    {
+        return $user->orders()->with("payments")->get()
+            ->flatMap(function($order) {
+                return $order->payments;
+            })->sum("amount");
+    }
+
+    public static function totalDebt($user)
+    {
+        return self::totalPayable($user) - self::totalPayed($user);
     }
 
 }
