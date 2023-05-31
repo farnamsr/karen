@@ -5,13 +5,13 @@
        <div class="position-sticky pt-3">
          <ul class="nav flex-column">
            <li class="nav-item">
-             <a class="nav-link active" aria-current="page" href="#">
+             <a id="orders" class="nav-link" aria-current="page" href="{{route('dashboard-orders')}}">
                <span data-feather="home"></span>
                سفارشات
              </a>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="#">
+             <a id="products" class="nav-link" href="{{route('dashboard-products')}}">
                <span data-feather="file"></span>
                محصولات
              </a>
@@ -43,3 +43,10 @@
          </ul>
        </div>
      </nav>
+
+    <script>
+        let splited = window.location.href.split("/");
+        let len = splited.length - 1;
+        let active = splited[len];
+        let nav = document.getElementById(active).classList.add("active");
+    </script>

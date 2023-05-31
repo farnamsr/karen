@@ -83,5 +83,11 @@ class DashboardController extends Controller
         return $cats;
     }
 
+    // Orders
+
+    public function dashboardOrders()
+    {
+        return view("dashboard.orders");
+    }
 
 }

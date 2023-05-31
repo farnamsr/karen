@@ -41,7 +41,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post("/category", [DashboardController::class, "category"])->name("cat-create");
         Route::post("/category/delete", [DashboardController::class, "deleteCat"])->name("cat-delete");
         Route::get("/cats", [DashboardController::class, "cats"])->name("cats");
-
+        //--- Orders ---//
+        Route::get("/orders", [DashboardController::class, "dashboardOrders"])->name("dashboard-orders");
     });
     Route::post("/order", [ShopController::class, "order"])->name("order");
     Route::get("/order-details", [PanelController::class, "orderDetails"])->name("orderDetails");
