@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Image;
+use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use \Morilog\Jalali\Jalalian;
+
 
 class DashboardController extends Controller
 {
@@ -88,6 +93,31 @@ class DashboardController extends Controller
     public function dashboardOrders()
     {
         return view("dashboard.orders");
+    }
+
+    public function ordersList(Request $request)
+    {
+        $orders = Order::where("status", $request->status)
+            ->with(['user'])->get();
+        return response()->json([
+            "result" => true,
+            "orders" => $orders
+        ]);
+    }
+    public function orderCashPayments(Request $request)
+    {
+        $payments = User::orderCashPayments($request->order_id);
+        $formattedPayments = [];
+        for ($i=0; $i < count($payments); $i++) {
+            $formattedPayments[$i]["id"] = $payments[$i]["id"];
+            $formattedPayments[$i]["amount"] = fa_number(number_format($payments[$i]["amount"]));
+            $formattedPayments[$i]["created_at"] =
+                fa_number(Jalalian::forge($payments[$i]["created_at"])->format('%Y/%m/%d'));
+        }
+        return response()->json([
+            "result" => true,
+            "payments" => $formattedPayments
+        ]);
     }
 
 }

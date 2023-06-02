@@ -61,24 +61,26 @@ class User extends Authenticatable
     public static function pendingOrders($userId)
     {
         return Order::where("user_id", $userId)
-            ->where("status", Order::STATUS_MIN_PAIED);
+            ->where("status", Order::STATUS_MIN_PAIED)
+            ->with(["details", "payments"])
+            ->get();
     }
     // delivered pendings: the orders with some delivered products and som pending products
-    public static function deliveredPendings($userId)
-    {
-        $pendings = self::pendingOrders($userId);
-        return $pendings->with(["details" => function($query) {
-            $query->where("status", OrderDetail::STATUS_DELIVERED);
-        }])->get();
-    }
-    public static function notDeliveredPendings($userId)
-    {
-        $payable = 0;
-        $pendings = self::pendingOrders($userId);
-        return $pendings->with(["payments","details" => function($query) {
-            $query->where("status", OrderDetail::STATUS_PENDING);
-        }])->get();
-    }
+    // public static function deliveredPendings($userId)
+    // {
+    //     $pendings = self::pendingOrders($userId);
+    //     return $pendings->with(["details" => function($query) {
+    //         $query->where("status", OrderDetail::STATUS_DELIVERED);
+    //     }])->get();
+    // }
+    // public static function notDeliveredPendings($userId)
+    // {
+    //     $payable = 0;
+    //     $pendings = self::pendingOrders($userId);
+    //     return $pendings->with(["payments","details" => function($query) {
+    //         $query->where("status", OrderDetail::STATUS_PENDING);
+    //     }])->get();
+    // }
     public static function watingSumToPay($watingOrder)
     {
         return $watingOrder->details()->sum("payable");
@@ -128,7 +130,8 @@ class User extends Authenticatable
         $debt = $payable - $payed;
         return [
             "debt" => $debt,
-            "payable" => $payable
+            "payable" => $payable,
+            "payed" => $payed
         ];
     }
 
@@ -150,6 +153,16 @@ class User extends Authenticatable
     public static function totalDebt($user)
     {
         return self::totalPayable($user) - self::totalPayed($user);
+    }
+
+    public static function orderCashPayments($orderId)
+    {
+        $records = Order::where("id", $orderId)
+            ->first()
+            ->payments()
+            ->where("type", Payment::TYPE_CASH)
+            ->get();
+        return $records;
     }
 
 }

@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get("/cats", [DashboardController::class, "cats"])->name("cats");
         //--- Orders ---//
         Route::get("/orders", [DashboardController::class, "dashboardOrders"])->name("dashboard-orders");
+        Route::get("/ordersList", [DashboardController::class, "ordersList"])->name("orders-list");
+        Route::get("/order-cash-payments", [DashboardController::class, "orderCashPayments"])->name("order-cash-payments");
     });
     Route::post("/order", [ShopController::class, "order"])->name("order");
     Route::get("/order-details", [PanelController::class, "orderDetails"])->name("orderDetails");

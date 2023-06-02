@@ -558,6 +558,7 @@
                                   <th scope="col">تعداد</th>
                                   <th scope="col">قیمت واحد (تومان)</th>
                                   <th scope="col">قابل پرداخت</th>
+                                  <th scope="col">وضعیت</th>
                                   <th scope="col">تاریخ تحویل</th>
                                 </tr>
                               </thead>
@@ -569,6 +570,10 @@
                             row += `<td>${this['count']}</td>`;
                             row += `<td>${this['unit_price']}</td>`;
                             row += `<td>${this['payable']}</td>`;
+                            let status;
+                            if(this['status'] == 1) { status = "<small class='text-primary'>در حال آماده سازی</small>" }
+                            if(this['status'] == 2) { status = "تحویل شده" }
+                            row += `<td>${status}</td>`;
                             if (this['delivery_time'] == null) {
                                 row += `<td class='text-secondary'>نامشخص</td>`;
                             }

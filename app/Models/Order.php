@@ -10,6 +10,7 @@ class Order extends Model
     use HasFactory;
     const STATUS_WAITING_USER = 1;
     const STATUS_MIN_PAIED = 2;
+    const STATUS_FINALIZED = 3;
 
     public function getDateFormat(){
         return 'U';
