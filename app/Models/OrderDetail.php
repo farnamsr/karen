@@ -22,7 +22,8 @@ class OrderDetail extends Model
 
     protected $fillable = [
         'color', "order_id", "count",
-        'payable', "product_id", "unit_price"
+        'payable', "product_id", "unit_price",
+        "status", "delivery_time"
     ];
 
     public function order()

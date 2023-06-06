@@ -38,6 +38,15 @@ class CheckDetail extends Model
         );
     }
 
+    protected function createdAt(): Attribute
+    {
+        return Attribute::make(
+            get: function(string $value) {
+                return fa_number(Jalalian::forge($value)->format('%Y/%m/%d'));
+            },
+        );
+    }
+
     protected function amount(): Attribute
     {
         return Attribute::make(

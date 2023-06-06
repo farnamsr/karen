@@ -8,8 +8,11 @@ use App\Models\Product;
 use App\Models\Image;
 use App\Models\Order;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use \Morilog\Jalali\Jalalian;
 
 
@@ -108,16 +111,91 @@ class DashboardController extends Controller
     {
         $payments = User::orderCashPayments($request->order_id);
         $formattedPayments = [];
+        $sum = 0;
         for ($i=0; $i < count($payments); $i++) {
             $formattedPayments[$i]["id"] = $payments[$i]["id"];
             $formattedPayments[$i]["amount"] = fa_number(number_format($payments[$i]["amount"]));
             $formattedPayments[$i]["created_at"] =
                 fa_number(Jalalian::forge($payments[$i]["created_at"])->format('%Y/%m/%d'));
+            $sum += $payments[$i]["amount"];
         }
         return response()->json([
             "result" => true,
-            "payments" => $formattedPayments
+            "payments" => $formattedPayments,
+            "sum" => fa_number(number_format($sum))
         ]);
+    }
+
+    public function orderChecks(Request $request)
+    {
+        $sum = 0;
+        $checks = Order::where("id", $request->order_id)
+        ->first()
+        ->checks;
+        foreach($checks as $check) {
+            $sum += str_replace(",", "", en_number($check["amount"]));
+        }
+        return response()->json([
+            "result" => true,
+            "checks" => $checks,
+            "sum" => fa_number(number_format($sum))
+        ]);
+    }
+
+    public function orderProducts(Request $request)
+    {
+        $products = Order::where("id", $request->order_id)
+            ->first()->details()->with("product")->get();
+        foreach ($products as $product) {
+            $product['count'] = fa_number($product['count']);
+            if ($product["delivery_time"]) {
+                $product["delivery_time"] =
+                    fa_number(Jalalian::forge($product["delivery_time"])->format('%Y/%m/%d'));
+            }
+        }
+        return response()->json([
+            "result" => true,
+            "products" => $products
+        ]);
+    }
+
+    public function updateDetails(Request $request)
+    {
+        $timestamp = null;
+        $detailId = $request["details"][0][0];
+        DB::beginTransaction();
+        try{
+            foreach($request['details'] as $detail) {
+                if($detail[2]) {
+                    $explodedDate = explode("/", en_number($detail[2]));
+                    $timestamp = strtotime((new Jalalian($explodedDate[0], $explodedDate[1], $explodedDate[2]))
+                    ->toCarbon()->toDateTimeString());
+                }
+                else { $timestamp = null; }
+
+                $res = OrderDetail::where("id", $detail[0])->update([
+                    "status" => $detail[1],
+                    "delivery_time" => $timestamp
+                ]);
+            }
+            $this->isAllDelivered($detailId);
+            DB::commit();
+            return response()->json(["result" => true]);
+        }
+        catch(Exception $e){
+            Log::error($e->getMessage());
+        }
+    }
+
+    public function isAllDelivered($detailId)
+    {
+        $order = OrderDetail::where("id", $detailId)
+        ->first()->order()->first();
+        $statusList = $order->details()->pluck("status")->toArray();
+        if (! in_array(OrderDetail::STATUS_PENDING, $statusList)) {
+            $order->status = Order::STATUS_FINALIZED;
+            $order->save();
+        }
     }
 
 }

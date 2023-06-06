@@ -45,6 +45,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get("/orders", [DashboardController::class, "dashboardOrders"])->name("dashboard-orders");
         Route::get("/ordersList", [DashboardController::class, "ordersList"])->name("orders-list");
         Route::get("/order-cash-payments", [DashboardController::class, "orderCashPayments"])->name("order-cash-payments");
+        Route::get("/order-checks", [DashboardController::class, "orderChecks"])->name("order-checks");
+        Route::get("/order-products", [DashboardController::class, "orderProducts"])->name("order-products");
+        Route::post("/update-details", [DashboardController::class, "updateDetails"])->name("update-details");
     });
     Route::post("/order", [ShopController::class, "order"])->name("order");
     Route::get("/order-details", [PanelController::class, "orderDetails"])->name("orderDetails");

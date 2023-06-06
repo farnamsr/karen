@@ -4,8 +4,7 @@
 <link rel="stylesheet" href="{{asset("css/bootstrap.css")}}">
 <link rel="stylesheet" href="{{asset("css/fonts.css")}}">
 <link rel="stylesheet" href="{{asset("css/dashboard.css")}}">
-<link rel="stylesheet" href="{{asset("css/file-upload.css")}}">
-<link rel="stylesheet" href="{{asset("css/image-preview.css")}}">
+<link rel="stylesheet" href="{{asset("css/datepicker.css")}}">
 <style>
 
 @media (min-width: 30em) {
@@ -71,7 +70,7 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title" id="paymentsModal">پرداخت های مشتری</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      <button id="" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="payments-modal-body">
                         <div class="h5 text-center mt-3 mb-4" id="order-debt-title"></div>
@@ -100,7 +99,7 @@
                               </h2>
                               <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                 <div id="" class="accordion-body">
-                                    <table class="table text-center">
+                                    <table class="table text-center table-bordered">
                                         <thead style="background: #ebebeb"><tr>
                                             <th scope="col">#</th>
                                             <th scope="col">مبلغ</th>
@@ -144,6 +143,47 @@
                   </div>
                 </div>
               </div>
+
+              {{-- Order Details Modal --}}
+
+              <button id="details-modal-btn" type="button" style="display: none" data-bs-toggle="modal" data-bs-target="#detailsModal">
+              </button>
+
+              <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModal" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="detailsModal">جزئیات سفارش</h5>
+                      <button id="close-dtl-modal" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="h5 text-center mt-4 mb-4">سفارش <span class="text-danger" id="order-dtl-title"></span></div>
+                      <table class="table borderless text-center">
+                        <thead style="background: #e7e5ff"><tr>
+                            <th scope="col">#</th>
+                            <th scope="col">نام کالا</th>
+                            <th scope="col">تعداد</th>
+                            <th scope="col">وضعیت</th>
+                            <th scope="col">تاریخ تحویل</th>
+                            </tr>
+                        </thead>
+                        <tbody id='details-table' style=" font-size:18px;">
+                            <tr id="details-row">
+                                <td class="text-secondary" id="product-name"></td>
+                                <td class="text-success" id="product-count"></td>
+                                <td class="text-danger" id="product-status"></td>
+                                <td class="text-danger" id="product-delivery"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+                      <button id="save-dtl-changes" type="button" class="btn btn-primary">ذخیره تغییرات</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </main>
     </div>
   </div>
@@ -151,14 +191,24 @@
 
 @section("scripts")
 <script src="{{asset("js/jquery.js")}}"></script>
-<script src="{{asset("js/file-upload.js")}}"></script>
-<script src="{{asset("js/image-preview.js")}}"></script>
 <script src="{{asset("js/sweet.js")}}"></script>
+<script src="{{asset("js/datepicker.js")}}"></script>
 
 <script>
     $(document).ready(function() {
         let pendingOrders = 2;
+        let currentDelInput;
         ordersList(pendingOrders);
+        function toFa(str) {
+            let fa = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+            let en = ["0","1","2","3","4","5","6","7","8","9"];
+            for(let i=0; i<str.length; ++i) {
+                if(en.includes(str[i])) {
+                    str = str.replace(str[i], fa[str[i]]);
+                }
+            }
+            return str;
+        }
         function ordersList(orderStatus) {
             $("#orders-table").empty();
             $.ajax({
@@ -175,7 +225,7 @@
                             row += `<td>${this['user']['name']} ${this['user']['lastname']}</td>`;
                             row += `<td>${this['invoice_number']}</td>`;
                             row += `<td data-id='${this['id']}' style='cursor:pointer;' class='order-payments text-warning'><i class='bx bxs-dollar-circle'></i></td>`;
-                            row += `<td style='cursor:pointer;' class='text-primary'><i class='bx bx-cart'></i></td>`;
+                            row += `<td data-id='${this['id']}' style='cursor:pointer;' class='text-primary order-details'><i class='bx bx-cart'></i></td>`;
                             row += `<td style='cursor:pointer;' class='text-secondary'><i class='bx bx-notepad'></i></td>`;
                             row += `</tr>`;
                         $("#orders-table").append(row);
@@ -216,7 +266,79 @@
                             row += `</tr>`;
                             ++i;
                             $("#cash-payments-table").append(row);
-                    })
+                    });
+                    let sum = `<tr style="background:#f2ffee;"><td colspan="1">مجموع</td><td colspan="2">${resp['sum']}</td></tr>`;
+                    $("#cash-payments-table").append(sum);
+                }
+            });
+        }
+        function getChecks(orderId) {
+            $("#check-payments-table").empty();
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('order-checks')}}",
+                type:"GET",
+                data:{order_id:orderId}
+            }).done(function(resp) {
+                if (resp['result'] == true) {
+                    $(resp['checks']).each(function() {
+                        let i = 1;
+                        let row = `<tr>`;
+                            row += `<td>${i}</td>`;
+                            row += `<td>${this['amount']}</td>`;
+                            row += `<td>${this['tracking_code']}</td>`;
+                            row += `<td>${this['created_at']}</td>`;
+                            row += `<td>${this['due_date']}</td>`;
+                            row += `</tr>`;
+                            ++i;
+                            $("#check-payments-table").append(row);
+                    });
+                    let sum = `<tr style="background:#f2ffee;"><td colspan="2">مجموع</td><td colspan="3">${resp['sum']}</td></tr>`;
+                    $("#check-payments-table").append(sum);
+                }
+            });
+        }
+        function orderProducts(orderId) {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('order-products')}}",
+                type:"GET",
+                data:{order_id:orderId}
+            }).done(function(resp) {
+                if(resp["result"] == true) {
+                    $(function() {
+                    $(".order-product-deltime").persianDatepicker({
+                            cellWidth: 25,
+                            cellHeight: 20,
+                            fontSize: 15,
+                        });
+                    });
+                    $("#details-table").empty();
+                    let i = 1;
+                    $(resp['products']).each(function() {
+                        let row = `<tr id="${this['id']}">`;
+                        row += `<td>${i}</td>`;
+                        row += `<td>${this['product']['name']}</td>`;
+                        row += `<td>${this['count']}</td>`;
+                        row += `<td>`;
+                            row += `<select class="form-select form-select-sm text-center order-product-status">`;
+                            row += `<option value="1"`;
+                            if(this['status'] == 1) { row += `selected` }
+                            row += `>در حال ساخت</option>`;
+                            row += `<option value="2"`;
+                            if(this['status'] == 2) { row += `selected` }
+                            row += `>تحویل شده</option>`;
+                            row += `</select>`;
+                        row += `</td>`;
+                        let deliveryTime = "";
+                        if(this['delivery_time'] != null) { deliveryTime =  this['delivery_time'];}
+                        row += `<td><input type="text"
+                                class="text-center order-product-deltime form-control form-control-sm"
+                                value="${deliveryTime}" /></td>`;
+                        row += `</tr>`;
+                        ++i;
+                        $("#details-table").append(row);
+                    });
                 }
             });
         }
@@ -224,6 +346,7 @@
         $(document).on("click", ".order-payments", function() {
             currentOrderId = $(this).attr("data-id");
             getCashPayments(currentOrderId);
+            getChecks(currentOrderId);
             let details = orderDebtDetails(currentOrderId);
             let invoiceNumber = $($(this).parents()[0]).attr("id");
             $("#order-debt-title").html(`وضعیت بدهی سفارش <span class="text-danger">${invoiceNumber}</span>`);
@@ -232,7 +355,56 @@
             $("#order-debt").html(details['debt']);
             $("#payments-modal-btn").click();
         });
+
+        $(document).on("click", ".order-details", function() {
+            let invoiceNumber = $($(this).parents()[0]).attr("id");
+            let orderId = $(this).attr("data-id");
+            orderProducts(orderId);
+            $("#order-dtl-title").html(invoiceNumber);
+            $("#details-modal-btn").click();
+        })
+
+        $(document).on("click", "#save-dtl-changes", function() {
+            let rows = $("#details-table").find("tr");
+            let details = [];
+            rows.each(function() {
+                let detail = [];
+                detail.push($(this).attr("id"));
+                detail.push($($(this).children()[3]).find(":selected").val());
+                detail.push($($(this).children()[4]).find("input").val());
+                details.push(detail);
+            });
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('update-details')}}",
+                type:"POST",
+                data:{details:details}
+            }).done(function(resp) {
+                if(resp["result"] == true) {
+                    $("#close-dtl-modal").click();
+                    setTimeout(() => {
+                        Swal.fire(
+                            'ثبت موفق !',
+                            `تغییرات با موفقیا اعمال شد`,
+                            'success'
+                        )
+                    }, 500);
+                }
+            });
+        });
+
+        $(document).on("click", ".order-product-deltime, .cell",function() {
+            if(this.tagName == 'DIV') {
+                let fa = toFa($(this).attr("data-jdate"));
+                currentDelInput.val(fa);
+            }
+            else { currentDelInput = $(this) }
+        });
     });
+</script>
+
+<script type="text/javascript">
+
 </script>
 
 @endsection
