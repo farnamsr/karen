@@ -229,24 +229,53 @@
                           </table>
                     </div>
                 </div>
-                <div class="h5 text-center mt-3">ثبت چک جدید</div>
-                <div class="row mt-4 check-row">
-                    <div class="col">
-                        <input type="text" class="form-control text-center tracking-code" placeholder="شماره صیادی" aria-label="">
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
-                    </div>
-                    <div class="col">
-                        <input style="text-align: center" type="text" class="form-control due-date" id="dp1" placeholder="انتخاب تاریخ">
-                    </div>
-                    <div class="col">
-                        <button class="btn btn-outline-primary w-100 submit-check" type="button">ثبت</button>
-                    </div>
-                </div>
                 <div class="row">
-                    <div class="col-12" id="checks-table">
+                    <div class="col-12 mt-4">
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                              <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">ثبت چک جدید</button>
+                              <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">پرداخت نقدی</button>
+                            </div>
+                          </nav>
+                          <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                                <div class="h5 text-center mt-3">ثبت چک جدید</div>
+                                <div class="row mt-4 check-row">
+                                    <div class="col">
+                                        <input type="text" class="form-control text-center tracking-code" placeholder="شماره صیادی" aria-label="">
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control text-center check-amount" placeholder="مبلغ" aria-label="">
+                                    </div>
+                                    <div class="col">
+                                        <input style="text-align: center" type="text" class="form-control due-date" id="dp1" placeholder="انتخاب تاریخ">
+                                    </div>
+                                    <div class="col">
+                                        <button class="btn btn-outline-primary w-100 submit-check" type="button">ثبت</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12" id="checks-table">
 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                                <div class="row">
+                                    <div class="col-8 mx-auto mb-5 mt-4">
+                                          <div class="mb-3 text-center">
+                                            <span class="">مقدار پرداخت نقدی:</span>
+                                            <input type="text" class="form-control mt-2 text-center" id="pay-amount"
+                                            placeholder="" value=""
+                                             style="letter-spacing: 3px; font-size: 20px;">
+                                          </div>
+                                          <div class="d-grid gap-2 col-6 mx-auto  w-100">
+                                            <button id="pay-pending" class="btn btn-success" type="button">پرداخت از طریق درگاه آنلاین</button>
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
                     </div>
                 </div>
             </div>
@@ -270,8 +299,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Understood</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
         </div>
       </div>
     </div>
