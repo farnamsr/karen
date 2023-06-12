@@ -205,7 +205,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="pay-modal">ثبت چک ها</h1>
+          <h1 class="modal-title fs-5" id="pay-modal">تسویه بدهی</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -262,16 +262,26 @@
                             </div>
                             <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                                 <div class="row">
-                                    <div class="col-8 mx-auto mb-5 mt-4">
-                                          <div class="mb-3 text-center">
-                                            <span class="">مقدار پرداخت نقدی:</span>
-                                            <input type="text" class="form-control mt-2 text-center" id="pay-amount"
-                                            placeholder="" value=""
-                                             style="letter-spacing: 3px; font-size: 20px;">
-                                          </div>
-                                          <div class="d-grid gap-2 col-6 mx-auto  w-100">
+                                    <div class="col-8 mx-auto mb-5 mt-5 input-group w-75">
+                                            <input type="text" class="form-control  text-center" id="cash-pay-amount"
+                                            placeholder="مبلغ پرداختی را وارد کنید..." value=""
+                                             style="font-size: 20px;">
                                             <button id="pay-pending" class="btn btn-success" type="button">پرداخت از طریق درگاه آنلاین</button>
-                                          </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <div class="h4 text-center mb-4 text-secondary">
+                                            پرداخت های انجام شده
+                                        </div>
+                                        <table class="table text-center table-bordered">
+                                            <thead style="background: #e8effa">
+                                                <td>#</td>
+                                                <td>مبلغ</td>
+                                                <td>تاریخ پرداخت</td>
+                                            </thead>
+                                            <tbody id="cash-payments-table"></tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -410,7 +420,7 @@
                                   <th scope="col">قابل پرداخت</th>
                                   <th scope="col">بدهی</th>
                                   <th scope="col">جزئیات</th>
-                                  <th scope="col">ثبت چک</th>
+                                  <th scope="col">تسویه بدهی</th>
                                 </tr>
                               </thead>
                               <tbody>`;
@@ -421,7 +431,7 @@
                             row += `<td>${this['payable']}</td>`;
                             row += `<td>${this['debt']}</td>`;
                             row += `<td id='${this['id']}' style='cursor:pointer;' class='text-primary dtl-btn'>مشاهده</td>`;
-                            row += `<td data-id='${this['id']}' style='cursor:pointer;' class='text-primary add-checks'>ثبت</td>`;
+                            row += `<td data-id='${this['id']}' style='cursor:pointer;' class='text-primary add-checks'>پرداخت</td>`;
                             row += `</tr>`;
                         table += row + `</tr>`;
                     })
@@ -506,31 +516,85 @@
                 }
             })
         }
-
-        $("#pay").on("click", function() {
-            $.ajax({
+        function payCash(amount, orderId) {
+          let resp = false;
+          $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 url: "{{route('pay')}}",
                 type:"POST",
+                async:false,
                 data: {
-                    amount: $("#pay-amount").val().replace(/,/g, ""),
+                    amount: amount.replace(/,/g, ""),
                     type: 1, // cash payment type
                     payment_status: 1,
-                    order_id: watingOrderId
+                    order_id: orderId
                 }
-            }).done(function(resp) {
-                if(resp["result"] == true) {
-                    getDebt();
-                    getPendings();
-                    if (resp["minPayed"] == true) {
-                        $("#home").empty();
-                        $("#home").html(`<div class="mt-5 text-center text-secondary h5">سفارشی یافت نشد</div>`);
-                    }
+            }).done(function(response) {
+               if(response['error'] == 'OVER_DEBT') {
+                    Swal.fire({
+                        title:"خطا در پرداخت",
+                        html:"مبلغ وارد شده بیشتر از مقدار بدهی است!",
+                        icon: 'error',
+                        showConfirmButton: true,
+                    })
+                    return;
                 }
+              if(response["result"] == true) {
+                resp = response;
+              }
             });
+            return resp;
+        }
+        function getCashPayments(orderId) {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('order-cash-payments-list')}}",
+                type:"GET",
+                async:false,
+                data: {
+                    order_id: orderId
+                }
+            }).done(function(response) {
+              $("#cash-payments-table").empty();
+              if(response["result"] == true) {
+                let i = 1;
+                $(response["payments"]).each(function() {
+                    let row = `<tr>`;
+                        row += `<td>${i}</td>`;
+                        row += `<td>${this['amount']}</td>`;
+                        row += `<td>${this['created_at']}</td>`;
+                        row += `</tr>`;
+                        i += 1;
+                    $("#cash-payments-table").append(row);
+                })
+              }
+            });
+        }
+        function errorMsg(msg) {
+            Swal.fire({
+                title:"خطا در ثبت",
+                html: msg,
+                icon: 'error',
+                showConfirmButton: true,
+            })
+        }
+
+        $("#pay").on("click", function() {
+          let resp = payCash($("#pay-amount").val(), watingOrderId);
+          if(resp['error'] == 'OVER_DEBT') {
+            console.log('overrr');
+          }
+          if(resp["result"] == true) {
+              getDebt();
+              getPendings();
+              if (resp["minPayed"] == true) {
+                  $("#home").empty();
+                  $("#home").html(`<div class="mt-5 text-center text-secondary h5">سفارشی یافت نشد</div>`);
+              }
+          }
         });
 
-        $("#pay-amount, .check-amount").on("input", function(e) {
+        $("#pay-amount, .check-amount, #cash-pay-amount").on("input", function(e) {
             let separated = separateString($(this).val().replace(/,/g, ""));
             $(this).val(separated);
         });
@@ -551,11 +615,28 @@
                 data:{
                     order_id:checkOrderId,
                     tracking_code:trackingCode,
-                    amount:amount,
+                    amount:amount.replace(/,/g, ""),
                     duedate:dueDate,
                     payment_type:2
                 }
             }).done(function(resp) {
+                if (resp['error'] == 'OVER_TIME') {
+                    errorMsg("بازه تاریخی مجاز برای ثبت چک از تاریخ امروز تا ۳ ماه آینده میباشد!");
+                    return false;
+                }
+                if (resp['error'] == 'INVALID') {
+                    errorMsg("مقادیر وارد شده نا معتبر است.");
+                    return false;
+                }
+                if(resp['error'] == 'OVER_DEBT') {
+                    Swal.fire({
+                        title:"خطا در پرداخت",
+                        html:"مبلغ وارد شده بیشتر از مقدار بدهی است!",
+                        icon: 'error',
+                        showConfirmButton: true,
+                    })
+                    return;
+                }
                 if(resp["result"] == true) {
                     $(".check-row").find("input").val("");
                     getChecks(checkOrderId);
@@ -621,8 +702,14 @@
             checkOrderId = $(this).attr("data-id");
             orderDebt(checkOrderId);
             getChecks(checkOrderId);
+            getCashPayments(checkOrderId);
             $("#check-modal-btn").click();
         })
+        $(document).on("click", "#pay-pending", function() {
+          let amount = $("#cash-pay-amount").val();
+          resp = payCash(amount, checkOrderId);
+          console.log(resp);
+        });
     });
 </script>
 @endsection

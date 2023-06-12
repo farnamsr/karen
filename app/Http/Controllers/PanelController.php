@@ -13,6 +13,11 @@ use \Morilog\Jalali\Jalalian;
 
 class PanelController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('debt_amount')->only(['payment', 'addCheck']);
+    }
     public function panel()
     {
         return view("panel", [
@@ -61,10 +66,6 @@ class PanelController extends Controller
     public function addCheck(Request $request)
     {
         DB::beginTransaction();
-        $request["amount"] = str_replace(",", "", $request["amount"]);
-        $explodedDate = explode("/", $request["duedate"]);
-        $request["duedate"] = strtotime((new Jalalian($explodedDate[0], $explodedDate[1], $explodedDate[2]))
-            ->toCarbon()->toDateTimeString());
         $request["payment_status"] = Payment::STATUS_PAYED;
         $request["type"] = Payment::TYPE_CHECK;
         try{
@@ -152,6 +153,8 @@ class PanelController extends Controller
             $detail["unit_price"] = fa_number(number_format($detail["unit_price"]));
             $detail["payable"] = fa_number(number_format($detail["payable"]));
             $detail["count"] = fa_number($detail["count"]);
+            $detail["delivery_time"] =
+                fa_number(Jalalian::forge($detail["delivery_time"])->format('%Y/%m/%d'));
         }
         return response()->json([
             "result" => true,
@@ -177,6 +180,26 @@ class PanelController extends Controller
         return response()->json([
             "result" => true,
             "debt" => fa_number(number_format($debt))
+        ]);
+    }
+
+    public function getOrderCashPayments(Request $request)
+    {
+        $payments = Order::where("id", $request->order_id)
+            ->first()
+            ->payments()
+            ->where("type", Payment::TYPE_CASH)
+            ->get();
+        $formatted = [];
+        foreach($payments as $payment) {
+            $formatted[] = [
+                "amount" => fa_number(number_format($payment["amount"])),
+                "created_at" => fa_number(Jalalian::forge($payment["created_at"])->format('%Y/%m/%d'))
+            ];
+        }
+        return response()->json([
+            "result" => true,
+            "payments" => $formatted
         ]);
     }
 }
