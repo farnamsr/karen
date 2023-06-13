@@ -530,6 +530,15 @@
                     order_id: orderId
                 }
             }).done(function(response) {
+                if(response['error'] == 'MIN_CASH') {
+                    Swal.fire({
+                        title:"خطا در پرداخت",
+                        html:"مبلغ وارد شده کمتر از حداقل مقدار پرداختی است!",
+                        icon: 'error',
+                        showConfirmButton: true,
+                    })
+                    return;
+                }
                if(response['error'] == 'OVER_DEBT') {
                     Swal.fire({
                         title:"خطا در پرداخت",
@@ -539,9 +548,19 @@
                     })
                     return;
                 }
-              if(response["result"] == true) {
-                resp = response;
-              }
+                if(response['error'] == 'INVALID') {
+                    Swal.fire({
+                        title:"خطا در پرداخت",
+                        html:"مقادیر وارد شده نا معتبر است",
+                        icon: 'error',
+                        showConfirmButton: true,
+                    })
+                    return;
+                }
+
+                if(response["result"] == true) {
+                    resp = response;
+                }
             });
             return resp;
         }
@@ -708,7 +727,6 @@
         $(document).on("click", "#pay-pending", function() {
           let amount = $("#cash-pay-amount").val();
           resp = payCash(amount, checkOrderId);
-          console.log(resp);
         });
     });
 </script>

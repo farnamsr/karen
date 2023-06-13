@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Order;
+use App\Models\Payment;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -33,6 +35,19 @@ class DebtAmount
             ]);
         }
 
+        if($request["type"] == Payment::TYPE_CASH) {
+            $order = Order::where("id", $request->order_id)->first();
+            if(! $order->payments()->where("type", Payment::TYPE_CASH)->exists()) {
+                $sumToPay = User::watingSumToPay($order);
+                $minCashPayment = User::minCashPayment($sumToPay);
+                if($request->amount < $minCashPayment) {
+                    return response()->json([
+                        "result" => false,
+                        "error" => "MIN_CASH"
+                    ]);
+                }
+            }
+        }
 
         if($request["duedate"]) {
             $explodedDate = explode("/", $request["duedate"]);
