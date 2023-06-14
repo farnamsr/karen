@@ -20,7 +20,6 @@ return new class extends Migration
             $table->integer("count")->unsigned();
             $table->string("unit_price", 16);
             $table->tinyInteger("status")->default(1);
-            $table->bigInteger("delivery_time")->unsigned()->nullable();
             $table->bigInteger("created_at")->unsigned();
             $table->bigInteger("updated_at")->unsigned();
         });

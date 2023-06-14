@@ -424,6 +424,7 @@
                                   <th scope="col">بدهی</th>
                                   <th scope="col">جزئیات</th>
                                   <th scope="col">تسویه بدهی</th>
+                                  <th scope="col">تاریخ تحویل</th>
                                 </tr>
                               </thead>
                               <tbody>`;
@@ -435,6 +436,9 @@
                             row += `<td>${this['debt']}</td>`;
                             row += `<td id='${this['id']}' style='cursor:pointer;' class='text-primary dtl-btn'>مشاهده</td>`;
                             row += `<td data-id='${this['id']}' style='cursor:pointer;' class='text-primary add-checks'>پرداخت</td>`;
+                            let deliveryTime = `نا مشخص`;
+                            if(this["delivery_time"] != null) { deliveryTime = this['delivery_time'] }
+                            row += `<td class='text-secondary'>${deliveryTime}</td>`;
                             row += `</tr>`;
                         table += row + `</tr>`;
                     })
@@ -719,8 +723,6 @@
                                   <th scope="col">تعداد</th>
                                   <th scope="col">قیمت واحد (تومان)</th>
                                   <th scope="col">قابل پرداخت</th>
-                                  <th scope="col">وضعیت</th>
-                                  <th scope="col">تاریخ تحویل</th>
                                 </tr>
                               </thead>
                               <tbody>`;
@@ -731,16 +733,6 @@
                             row += `<td>${this['count']}</td>`;
                             row += `<td>${this['unit_price']}</td>`;
                             row += `<td>${this['payable']}</td>`;
-                            let status;
-                            if(this['status'] == 1) { status = "<small class='text-primary'>در حال آماده سازی</small>" }
-                            if(this['status'] == 2) { status = "تحویل شده" }
-                            row += `<td>${status}</td>`;
-                            if (this['delivery_time'] == null) {
-                                row += `<td class='text-secondary'>نامشخص</td>`;
-                            }
-                            else{
-                                row += `<td>${this['delivery_time']}</td>`;
-                            }
                             table += row;
                     });
                     $("#dtl-modal-title").html(`جزئیات سفارش &nbsp; <span class='text-danger'>${resp['invoice_number']}<span>`)

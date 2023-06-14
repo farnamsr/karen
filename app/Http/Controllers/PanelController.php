@@ -139,6 +139,8 @@ class PanelController extends Controller
             $record["payable"] = fa_number(number_format($payable));
             $record["debt"] = fa_number(number_format($payable - $payed));
             $record["invoice_number"] = fa_number($record['invoice_number']);
+            $record["delivery_time"] =
+            fa_number(Jalalian::forge($record["delivery_time"])->format('%Y/%m/%d'));
         }
         return response()->json([
             "result" => true,
@@ -161,8 +163,6 @@ class PanelController extends Controller
             $detail["unit_price"] = fa_number(number_format($detail["unit_price"]));
             $detail["payable"] = fa_number(number_format($detail["payable"]));
             $detail["count"] = fa_number($detail["count"]);
-            $detail["delivery_time"] =
-                fa_number(Jalalian::forge($detail["delivery_time"])->format('%Y/%m/%d'));
         }
         return response()->json([
             "result" => true,

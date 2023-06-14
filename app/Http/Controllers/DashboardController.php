@@ -144,41 +144,38 @@ class DashboardController extends Controller
 
     public function orderProducts(Request $request)
     {
-        $products = Order::where("id", $request->order_id)
-            ->first()->details()->with("product")->get();
+        $order = Order::where("id", $request->order_id)->first();
+        $deltime = null;
+        $products = $order->details()->with("product")->get();
         foreach ($products as $product) {
             $product['count'] = fa_number($product['count']);
-            if ($product["delivery_time"]) {
-                $product["delivery_time"] =
-                    fa_number(Jalalian::forge($product["delivery_time"])->format('%Y/%m/%d'));
-            }
+        }
+        if ($order["delivery_time"]) {
+            $deltime = fa_number(Jalalian::forge($order["delivery_time"])->format('%Y/%m/%d'));
         }
         return response()->json([
             "result" => true,
-            "products" => $products
+            "products" => $products,
+            "status" => $order->status,
+            "deltime" => $deltime
         ]);
     }
 
     public function updateDetails(Request $request)
     {
         $timestamp = null;
-        $detailId = $request["details"][0][0];
         DB::beginTransaction();
         try{
-            foreach($request['details'] as $detail) {
-                if($detail[2]) {
-                    $explodedDate = explode("/", en_number($detail[2]));
-                    $timestamp = strtotime((new Jalalian($explodedDate[0], $explodedDate[1], $explodedDate[2]))
-                    ->toCarbon()->toDateTimeString());
-                }
-                else { $timestamp = null; }
-
-                $res = OrderDetail::where("id", $detail[0])->update([
-                    "status" => $detail[1],
-                    "delivery_time" => $timestamp
-                ]);
+            $explodedDate = explode("/", en_number($request->del_time));
+            $timestamp = strtotime((new Jalalian($explodedDate[0], $explodedDate[1], $explodedDate[2]))
+            ->toCarbon()->toDateTimeString());
+            $order = Order::where("id", $request->order_id)->first();
+            $order->delivery_time = $timestamp;
+            $order->status = $request->status;
+            $order->save();
+            if($request->status == Order::STATUS_DELIVERED) {
+                $order->details()->update(["status" => OrderDetail::STATUS_FINALIZED]);
             }
-            $this->isAllDelivered($detailId);
             DB::commit();
             return response()->json(["result" => true]);
         }

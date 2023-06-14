@@ -10,7 +10,7 @@ class OrderDetail extends Model
     use HasFactory;
 
     const STATUS_PENDING = 1;
-    const STATUS_DELIVERED = 2;
+    const STATUS_FINALIZED = 2;
     public function getDateFormat(){
         return 'U';
     }

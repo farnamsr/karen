@@ -163,19 +163,29 @@
                             <th scope="col">#</th>
                             <th scope="col">نام کالا</th>
                             <th scope="col">تعداد</th>
-                            <th scope="col">وضعیت</th>
-                            <th scope="col">تاریخ تحویل</th>
                             </tr>
                         </thead>
                         <tbody id='details-table' style=" font-size:18px;">
                             <tr id="details-row">
                                 <td class="text-secondary" id="product-name"></td>
                                 <td class="text-success" id="product-count"></td>
-                                <td class="text-danger" id="product-status"></td>
-                                <td class="text-danger" id="product-delivery"></td>
                             </tr>
                         </tbody>
                     </table>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12 mt-3 mb-3">
+                            <label class="mb-2" for="">تاریخ تحویل سفارش :</label>
+                            <input type="text"  class="order-deltime form-control text-center">
+                        </div>
+                        <div class="col-md-6 col-sm-12 mt-3 mb-3">
+                            <label class="mb-2" for="">وضعیت سفارش :</label>
+                            <select id="order-del-time" class="form-control order-status">
+                                <option disabled value="1">انتخاب وضعیت</option>
+                                <option value="2">در حال ساخت</option>
+                                <option value="3">تحویل شده</option>
+                            </select>
+                        </div>
+                    </div>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
@@ -198,6 +208,7 @@
     $(document).ready(function() {
         let pendingOrders = 2;
         let currentDelInput;
+        let orderId;
         ordersList(pendingOrders);
         function toFa(str) {
             let fa = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
@@ -307,7 +318,7 @@
             }).done(function(resp) {
                 if(resp["result"] == true) {
                     $(function() {
-                    $(".order-product-deltime").persianDatepicker({
+                    $(".order-deltime").persianDatepicker({
                             cellWidth: 25,
                             cellHeight: 20,
                             fontSize: 15,
@@ -320,25 +331,13 @@
                         row += `<td>${i}</td>`;
                         row += `<td>${this['product']['name']}</td>`;
                         row += `<td>${this['count']}</td>`;
-                        row += `<td>`;
-                            row += `<select class="form-select form-select-sm text-center order-product-status">`;
-                            row += `<option value="1"`;
-                            if(this['status'] == 1) { row += `selected` }
-                            row += `>در حال ساخت</option>`;
-                            row += `<option value="2"`;
-                            if(this['status'] == 2) { row += `selected` }
-                            row += `>تحویل شده</option>`;
-                            row += `</select>`;
-                        row += `</td>`;
-                        let deliveryTime = "";
-                        if(this['delivery_time'] != null) { deliveryTime =  this['delivery_time'];}
-                        row += `<td><input type="text"
-                                class="text-center order-product-deltime form-control form-control-sm"
-                                value="${deliveryTime}" /></td>`;
-                        row += `</tr>`;
                         ++i;
                         $("#details-table").append(row);
                     });
+                    $(".order-status").val(resp["status"]);
+                    if(resp["deltime"] != null) {
+                        $(".order-deltime").val(resp["deltime"]);
+                    }
                 }
             });
         }
@@ -358,27 +357,22 @@
 
         $(document).on("click", ".order-details", function() {
             let invoiceNumber = $($(this).parents()[0]).attr("id");
-            let orderId = $(this).attr("data-id");
+            orderId = $(this).attr("data-id");
             orderProducts(orderId);
             $("#order-dtl-title").html(invoiceNumber);
             $("#details-modal-btn").click();
         })
 
         $(document).on("click", "#save-dtl-changes", function() {
-            let rows = $("#details-table").find("tr");
-            let details = [];
-            rows.each(function() {
-                let detail = [];
-                detail.push($(this).attr("id"));
-                detail.push($($(this).children()[3]).find(":selected").val());
-                detail.push($($(this).children()[4]).find("input").val());
-                details.push(detail);
-            });
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 url: "{{route('update-details')}}",
                 type:"POST",
-                data:{details:details}
+                data:{
+                    order_id:orderId,
+                    del_time: $(".order-deltime").val(),
+                    status: $(".order-status").val()
+                }
             }).done(function(resp) {
                 if(resp["result"] == true) {
                     $("#close-dtl-modal").click();
@@ -393,7 +387,7 @@
             });
         });
 
-        $(document).on("click", ".order-product-deltime, .cell",function() {
+        $(document).on("click", ".order-deltime, .cell",function() {
             if(this.tagName == 'DIV') {
                 let fa = toFa($(this).attr("data-jdate"));
                 currentDelInput.val(fa);

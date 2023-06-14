@@ -16,6 +16,7 @@ return new class extends Migration
             $table->bigInteger("user_id")->unsigned();
             $table->tinyInteger("status");
             $table->string("invoice_number", 16)->nullable();
+            $table->bigInteger("delivery_time")->unsigned()->nullable();
             $table->bigInteger("created_at")->unsigned();
             $table->bigInteger("updated_at")->unsigned();
         });

@@ -69,7 +69,7 @@ class User extends Authenticatable
     public static function finalizedOrders($userId)
     {
         return Order::where("user_id", $userId)
-            ->where("status", Order::STATUS_FINALIZED)
+            ->where("status", Order::STATUS_DELIVERED)
             ->with(["details", "payments"])
             ->get();
     }
