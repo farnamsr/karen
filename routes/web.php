@@ -59,6 +59,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get("/has-wating", [PanelController::class, "hasWatingOrder"])->name("has-wating");
     Route::get("/waitings", [PanelController::class, "waitings"])->name("waitings");
     Route::get("/not-delivered-pendings", [PanelController::class, "pendings"])->name("not-delivered-pendings");
+    Route::get("/finalizeds", [PanelController::class, "finalizedOrders"])->name("finalizeds");
     Route::get("/order-cash-payments-list", [PanelController::class, "getOrderCashPayments"])->name("order-cash-payments-list");
 
 });

@@ -145,6 +145,14 @@ class PanelController extends Controller
             "records" => $records
         ]);
     }
+    public function finalizedOrders(Request $request)
+    {
+        $orders = User::finalizedOrders(auth()->id());
+        return response()->json([
+            "result" => true,
+            "records" => $orders,
+        ]);
+    }
     public function orderDetails(Request $request)
     {
         $order = Order::where("id", $request->order_id)->first();

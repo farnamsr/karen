@@ -112,7 +112,9 @@
                     <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 
                     </div>
-                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+
+                    </div>
                   </div>
                   {{-- <div class="list-group mt-5">
                     <a href="#" class="list-group-item list-group-item-action" aria-current="true">
@@ -338,6 +340,7 @@
         getDebt();
         getWatings();
         getPendings();
+        getFinalizeds();
         $("#debt").html(debt);
         function getDebt() {
             $.ajax({
@@ -437,6 +440,36 @@
                     })
                     table += `</tbody></table>`;
                     $("#profile").html(table);
+                }
+            });
+        }
+        function getFinalizeds() {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('finalizeds')}}",
+                type:"GET"
+            }).done(function(resp) {
+                if(resp["result"] == true) {
+                    let table = `<table class="table table-striped table-hover mt-4 text-center">
+                            <thead>
+                                <tr>
+                                  <th scope="col">#</th>
+                                  <th scope="col">شماره فاکتور</th>
+                                  <th scope="col">دریافت فاکتور</th>
+                                </tr>
+                              </thead>
+                              <tbody>`;
+                    let i = 0;
+                    $(resp['records']).each(function() {
+                        let row = `<tr>`;
+                            row += `<td>${++i}</td>`;
+                            row += `<td>${this['invoice_number']}</td>`;
+                            row += `<td id='${this['id']}' style='cursor:pointer;' class='text-primary imvoice-btn'>دریافت</td>`;
+                            row += `</tr>`;
+                        table += row + `</tr>`;
+                    })
+                    table += `</tbody></table>`;
+                    $("#contact").html(table);
                 }
             });
         }

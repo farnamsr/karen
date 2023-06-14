@@ -65,6 +65,14 @@ class User extends Authenticatable
             ->with(["details", "payments"])
             ->get();
     }
+
+    public static function finalizedOrders($userId)
+    {
+        return Order::where("user_id", $userId)
+            ->where("status", Order::STATUS_FINALIZED)
+            ->with(["details", "payments"])
+            ->get();
+    }
     // delivered pendings: the orders with some delivered products and som pending products
     // public static function deliveredPendings($userId)
     // {
