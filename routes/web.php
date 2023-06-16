@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ShopController;
+use App\Models\Order;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PanelController;
@@ -61,6 +63,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get("/not-delivered-pendings", [PanelController::class, "pendings"])->name("not-delivered-pendings");
     Route::get("/finalizeds", [PanelController::class, "finalizedOrders"])->name("finalizeds");
     Route::get("/order-cash-payments-list", [PanelController::class, "getOrderCashPayments"])->name("order-cash-payments-list");
+
+    Route::get("/invoice", function(Request $request) {
+        $order = Order::invoice($request->order);
+        return view("invoice",['order' => $order]);
+    })->name("invoice");
 
 });
 

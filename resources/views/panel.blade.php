@@ -444,6 +444,9 @@
                     })
                     table += `</tbody></table>`;
                     $("#profile").html(table);
+                    if(resp["records"].length < 1) {
+                        $("#profile").html(`<div class="mt-5 text-center text-secondary h5">سفارشی یافت نشد</div>`);
+                    }
                 }
             });
         }
@@ -465,15 +468,21 @@
                               <tbody>`;
                     let i = 0;
                     $(resp['records']).each(function() {
+                        let route = "{{route('invoice')}}" + "?order=" + this['id'];
                         let row = `<tr>`;
                             row += `<td>${++i}</td>`;
                             row += `<td>${this['invoice_number']}</td>`;
-                            row += `<td id='${this['id']}' style='cursor:pointer;' class='text-primary imvoice-btn'>دریافت</td>`;
+                            row += `<td id='${this['id']}' style='cursor:pointer;' class='text-primary imvoice-btn'>
+                                    <a href='${route}'>دریافت</a>
+                                </td>`;
                             row += `</tr>`;
                         table += row + `</tr>`;
                     })
                     table += `</tbody></table>`;
                     $("#contact").html(table);
+                    if(resp["records"].length < 1) {
+                        $("#contact").html(`<div class="mt-5 text-center text-secondary h5">سفارشی یافت نشد</div>`);
+                    }
                 }
             });
         }

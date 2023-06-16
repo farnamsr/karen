@@ -139,8 +139,10 @@ class PanelController extends Controller
             $record["payable"] = fa_number(number_format($payable));
             $record["debt"] = fa_number(number_format($payable - $payed));
             $record["invoice_number"] = fa_number($record['invoice_number']);
-            $record["delivery_time"] =
-            fa_number(Jalalian::forge($record["delivery_time"])->format('%Y/%m/%d'));
+            if($record["delivery_time"]) {
+                $record["delivery_time"] =
+                fa_number(Jalalian::forge($record["delivery_time"])->format('%Y/%m/%d'));
+            }
         }
         return response()->json([
             "result" => true,

@@ -21,6 +21,9 @@ class DebtAmount
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $request["amount"] = en_number(
+            str_replace(",", "", $request["amount"])
+        );
         $validator = Validator::make($request->all(), [
             "amount" => "required|regex:/^[1-9][0-9]*$/",
             "tracking_code" => "required_if:type,2|regex:/^[1-9][0-9]*$/",

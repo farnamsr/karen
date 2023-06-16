@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use \Morilog\Jalali\Jalalian;
+
 
 class Order extends Model
 {
@@ -43,5 +45,14 @@ class Order extends Model
     public function checks()
     {
         return $this->hasMany(CheckDetail::class);
+    }
+
+    public static function invoice($orderId)
+    {
+        $order = Order::where("id", $orderId)
+            ->where("status", self::STATUS_DELIVERED)
+            ->with(["details.product", "user"])->first();
+        $order->delivery_time = fa_number(Jalalian::forge($order["delivery_time"])->format('%Y/%m/%d'));
+        return $order;
     }
 }
