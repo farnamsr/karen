@@ -14,7 +14,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-sm-12 mx-auto mt-5"
-            style="background: white; padding-bottom: 200px;
+            style="background: white; padding-bottom: 100px;
              padding-left: 40px;padding-right: 40px;
              border-radius: 10px;">
                 <div class="h3 text-center" style="margin-top: 100px;">تکمیل مشخصات کاربر</div>
@@ -35,6 +35,11 @@
                      style="" id="lastname" placeholder="">
                      <small id="lastname-err" class="text-danger"></small>
                   </div>
+                  <div class="mb-3 mt-3">
+                    <label class="mb-2" for="lastname">آدرس: </label>
+                    <textarea id="address" class="form-control" id="" cols="30" rows="4"></textarea>
+                    <small id="address-err" class="text-danger"></small>
+                  </div>
                   <div class="d-grid gap-2 mt-4">
                     <button id="submit" class="btn btn-primary" type="button">تکمیل ثبت نام</button>
                   </div>
@@ -50,6 +55,7 @@
 <script>
     $(document).ready(function() {
         $("#submit").on("click", function() {
+            $("small").html("");
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 url:"{{route('compelete-info', $phone)}}",
@@ -67,11 +73,14 @@
                         icon: 'success',
                         showConfirmButton: false,
                         timer: 3000
-                    })
+                    });
+                    setTimeout(() => {
+                        window.location.href = "{{route('panel')}}"
+                    }, 2000);
                 }
-                setTimeout(() => {
-                    window.location.href = "{{route('panel')}}"
-                }, 2000);
+                if(resp['error'] == "INVALID") {
+
+                }
             })
         });
     })

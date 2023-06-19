@@ -39,6 +39,7 @@
 
 @section("scripts")
 <script src="{{asset("js/jquery.js")}}"></script>
+<script src="{{asset("js/sweet.js")}}"></script>
 <script>
     $(document).ready(function() {
         $("#submit").on("click", function() {
@@ -50,6 +51,14 @@
             }).done(function(resp) {
                 let result = resp["result"];
                 let type = resp["type"];
+                if(resp["error"] == "INVALID") {
+                    Swal.fire({
+                        title:"خطا",
+                        html: "شماره وارد شده نا معتبر است!",
+                        icon: 'error',
+                        showConfirmButton: true
+                    })
+                }
                 if(result && type == "code_request") {
                     $("#code-inp").slideDown("slow");
                 }
