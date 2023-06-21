@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string("address", 256);
             $table->unsignedBigInteger("user_id");
             $table->tinyInteger("selected");
-            $table->timestamps();
+            $table->bigInteger("created_at")->unsigned();
+            $table->bigInteger("updated_at")->unsigned();        
         });
     }
 

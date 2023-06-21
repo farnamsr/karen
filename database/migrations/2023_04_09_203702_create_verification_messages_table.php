@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer("code");
             $table->tinyInteger("type");
             $table->string("phone_number");
+            $table->string("ip", 64);
             $table->tinyInteger("status")->default(0);
             $table->bigInteger("created_at")->unsigned();
             $table->bigInteger("updated_at")->unsigned();

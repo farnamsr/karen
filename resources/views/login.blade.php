@@ -22,7 +22,7 @@
                     <input type="text" class="form-control text-center p-2"
                      style="letter-spacing: 5px; font-weight: bold" id="phone" placeholder="">
                   </div>
-                  <div class="mb-3 mt-4" style="display: none" id="code-inp">
+                  <div class="mb-3 mt-4" id="code-inp">
                     <label class="mb-2" for="phone">کد تایید:</label>
                     <input maxlength="6" type="text" class="form-control text-center p-2"
                      style="letter-spacing: 8px; font-weight: bold" id="code" placeholder="">
@@ -42,6 +42,14 @@
 <script src="{{asset("js/sweet.js")}}"></script>
 <script>
     $(document).ready(function() {
+        let minutes;
+        let serverTimestamp = "{{$timestamp}}";
+        let clientTimestamp = Math.floor(Date.now() / 1000);
+        let timeDiff = clientTimestamp - serverTimestamp;
+        if(serverTimestamp > 0 && timeDiff < 120) {
+            $("#submit").prop("disabled", true);
+            countDown(120 - timeDiff);
+        }
         $("#submit").on("click", function() {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -59,8 +67,9 @@
                         showConfirmButton: true
                     })
                 }
-                if(result && type == "code_request") {
-                    $("#code-inp").slideDown("slow");
+                else if(resp["result"] == true) {
+                    $("#submit").prop("disabled", true);
+                    countDown(120);
                 }
             })
         });
@@ -81,6 +90,22 @@
                 })
             }
         });
+
+        function countDown(seconds) {
+            let timerSecs, counterInterval;
+            let timerString;
+            counterInterval = setInterval(() => {
+                minutes = Math.floor(seconds / 60);
+                timerSecs = (seconds--) % 60;
+                timerString = `${timerSecs.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')}`;
+                $("#submit").html(timerString);
+                if(seconds < 0) {
+                    $("#submit").prop("disabled", false);
+                    $("#submit").html("دریافت کد تایید");
+                    clearInterval(counterInterval);
+                }
+            }, 1000);
+        }
     });
 </script>
 @endsection

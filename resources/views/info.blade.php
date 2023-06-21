@@ -63,6 +63,7 @@
                 data:{
                     "name": $("#name").val(),
                     "lastname": $("#lastname").val(),
+                    "address": $("#address").val(),
                     "phone":"{{$phone}}"
                 }
             }).done(function(resp) {
@@ -79,7 +80,9 @@
                     }, 2000);
                 }
                 if(resp['error'] == "INVALID") {
-
+                    for(let i in resp["messages"]) {
+                        $("#" + i + "-err").html("مقدار وارد شده نامعتبر است.")
+                    }
                 }
             })
         });

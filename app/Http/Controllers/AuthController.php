@@ -35,6 +35,7 @@ class AuthController extends Controller
             "code" => randstr(6),
             "type" => $type,
             "phone_number" => $request["phone"],
+            "ip" => $request->ip()
         ]);
         return response()->json([
             "result" => true,
@@ -112,6 +113,7 @@ class AuthController extends Controller
         }
         catch(\Exception $e) {
             DB::rollBack();
+            \Log::error($e->getMessage());
         }
     }
     private function setInfo($name, $lastname, $phone)

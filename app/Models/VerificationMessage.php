@@ -9,7 +9,7 @@ class VerificationMessage extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'phone_number', "code", "type"
+        'phone_number', "code", "type", "ip"
     ];
     const STATUS_UNUSED = 0;
     const STATUS_VERIFIED = 1;

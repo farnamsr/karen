@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ShopController;
 use App\Models\Order;
+use App\Models\VerificationMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -22,8 +23,11 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get("/login", function() {
-    return view("login");
+Route::get("/login", function(Request $request) {
+    $timestamp = 0;
+    $ip = VerificationMessage::where("ip", $request->ip())->latest()->first();
+    if($ip) { $timestamp = strtotime($ip->created_at); }
+    return view("login", compact("timestamp"));
 })->name("login");
 
 Route::post("/auth/attempt", [AuthController::class, "attempt"])->name("attempt");
