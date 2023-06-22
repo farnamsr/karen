@@ -26,159 +26,43 @@
         <h2>همین الان سفارش بده !</h2>
     </div>
     <div class="shop-container">
-        <div class="box">
+        @foreach ($mostSelled as $product)
+        <div class="box" data-href="{{route('getProduct', $product->id)}}" style="cursor: pointer">
             <div class="box-img">
-                <img src="{{asset("img/p1.jpg")}}" alt="">
+                <img src="{{$product->img_path}}" alt="">
             </div>
             <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
+                <h3>{{$product->name}}</h3>
             </div>
-            <span class="price">2,500,000</span>
+            <span class="price">
+                {{fa_number(number_format($product->price))}}
+                <small style="color: gray; margin-right: 6px;">تومان</small>
+            </span>        
         </div>
-        <div class="box">
-            <div class="box-img">
-                <img src="{{asset("img/p2.jpg")}}" alt="">
-            </div>
-            <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
-            </div>
-            <span class="price">2,500,000</span>
-        </div>
-        <div class="box">
-            <div class="box-img">
-                <img src="{{asset("img/p3.jpg")}}" alt="">
-            </div>
-            <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
-            </div>
-            <span class="price">2,500,000</span>
-        </div>
-        <div class="box">
-            <div class="box-img">
-                <img src="{{asset("img/p4.jpg")}}" alt="">
-            </div>
-            <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
-            </div>
-            <span class="price">2,500,000</span>
-        </div>
-        <div class="box">
-            <div class="box-img">
-                <img src="{{asset("img/p5.jpg")}}" alt="">
-            </div>
-            <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
-            </div>
-            <span class="price">2,500,000</span>
-        </div>
-        <div class="box">
-            <div class="box-img">
-                <img src="{{asset("img/p6.jpg")}}" alt="">
-            </div>
-            <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
-            </div>
-            <span class="price">2,500,000</span>
-        </div>
+        @endforeach
     </div>
 </section>
 
 <section class="new" id="new">
-    <div class="heading">
-        <span>جدید ترین محصولات</span>
+    <div class="heading" style="text-align: center">
+        <span style="color: #518306">جدید ترین محصولات</span>
         <h2>همین الان سفارش بده !</h2>
     </div>
     <div class="new-container">
-        <div class="box">
+        @foreach ($newest as $product)
+        <div class="box" data-href="{{route('getProduct', $product->id)}}" style="cursor: pointer">
             <div class="box-img">
-                <img src="{{asset("img/p3.jpg")}}" alt="">
+                <img src="{{$product->img_path}}" alt="">
             </div>
             <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
+                <h3>{{$product->name}}</h3>
             </div>
-            <span class="price">2,500,000</span>
+            <span class="price">
+                {{fa_number(number_format($product->price))}}
+                <small style="color: gray; margin-right: 6px;">تومان</small>
+            </span>
         </div>
-        <div class="box">
-            <div class="box-img">
-                <img src="{{asset("img/p3.jpg")}}" alt="">
-            </div>
-            <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
-            </div>
-            <span>2,500,000</span>
-        </div>
-        <div class="box">
-            <div class="box-img">
-                <img src="{{asset("img/p3.jpg")}}" alt="">
-            </div>
-            <div class="title-price">
-                <h3>صندلی خاکستری</h3>
-                <div class="stars">
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star"></i>
-                    <i class="bx bxs-star-half"></i>
-                </div>
-            </div>
-            <span class="price">2,500,000</span>
-        </div>
+        @endforeach
     </div>
 </section>
 
@@ -208,5 +92,14 @@
 @endsection
 
 @section("scripts")
+<script src="{{asset("js/jquery.js")}}"></script>
 <script src="{{asset("js/navbar.js")}}"></script>
+
+<script>
+    $(document).ready(function() {
+        $(".box").on("click", function() {
+            var win = window.open($(this).attr('data-href'));
+        })
+    })
+</script>
 @endsection

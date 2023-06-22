@@ -3,6 +3,8 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ShopController;
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\User;
 use App\Models\VerificationMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,15 +22,17 @@ use App\Http\Controllers\PanelController;
 */
 
 Route::get('/', function () {
-    return view('home');
-});
+    $mostSelled = OrderDetail::mostSelled();
+    $newest = OrderDetail::newest();
+    return view('home',compact(["mostSelled", "newest"]));
+})->name('home');
 
 Route::get("/login", function(Request $request) {
     $timestamp = 0;
     $ip = VerificationMessage::where("ip", $request->ip())->latest()->first();
     if($ip) { $timestamp = strtotime($ip->created_at); }
     return view("login", compact("timestamp"));
-})->name("login");
+})->name("login")->middleware("guest");
 
 Route::post("/auth/attempt", [AuthController::class, "attempt"])->name("attempt");
 Route::post("/auth/verify_code", [AuthController::class, "verifyCode"])->name("verify_code");
@@ -73,8 +77,12 @@ Route::middleware(['auth'])->group(function () {
         return view("invoice",['order' => $order]);
     })->name("invoice");
 
+    Route::post("/logout", [AuthController::class, "logout"])->name("logout");
+
 });
 
 
 Route::get("/shop", [ShopController::class, "shop"])->name("shop");
 Route::get("/product/{pid}", [ShopController::class, "product"])->name("getProduct");
+
+

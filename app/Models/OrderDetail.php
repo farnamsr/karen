@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class OrderDetail extends Model
 {
@@ -33,5 +34,33 @@ class OrderDetail extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public static function mostSelled()
+    {
+        $res = DB::table("order_details")
+            ->select("product_id", DB::raw("SUM(count) as total"))
+            ->groupBy("product_id")
+            ->orderByDesc("total")
+            ->limit(3)
+            ->pluck("product_id");
+        $products = Product::whereIn("id",$res)->get();
+        foreach($products as $product) {
+            $image = $product->images()->first();
+            $imageSrc = asset("storage/products/{$image->product_id}_{$image->id}_{$image->created_at}.{$image->ext}");
+            $product["img_path"] = $imageSrc;
+        }
+        return $products;
+    }
+
+    public static function newest()
+    {
+        $products = Product::orderByDesc("id")->limit(3)->get();
+        foreach($products as $product) {
+            $image = $product->images()->first();
+            $imageSrc = asset("storage/products/{$image->product_id}_{$image->id}_{$image->created_at}.{$image->ext}");
+            $product["img_path"] = $imageSrc;
+        }
+        return $products;
     }
 }

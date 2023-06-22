@@ -129,4 +129,13 @@ class AuthController extends Controller
          return Role::hasRole(auth()->user(), Role::ROLE_ADMIN) ?
             route("dashboard-products") : route("panel");
     }
+
+    public function logout()
+    {
+        Auth::logout();
+        return response()->json([
+            "result" => true,
+            "redirect" => route("home")
+        ]);
+    }
 }

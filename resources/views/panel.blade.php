@@ -69,7 +69,7 @@
                             <i class='bx bx-directions list-ic' ></i>
                           آدرس ها
                         </li>
-                        <li style="cursor: pointer;" class="list-group-item d-flex align-items-center">
+                        <li id="logout" style="cursor: pointer;" class="list-group-item d-flex align-items-center">
                             <i class='bx bx-exit list-ic' ></i>
                           خروج از سیستم
                         </li>
@@ -762,6 +762,17 @@
           let amount = $("#cash-pay-amount").val();
           resp = payCash(amount, checkOrderId);
         });
+        $("#logout").on("click", function() {
+          $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: "{{route('logout')}}",
+                type:"POST",
+            }).done(function(resp) {
+              if (resp['result'] == true) {
+                window.location.href = resp['redirect'];
+              }
+            })
+        })
     });
 </script>
 @endsection
