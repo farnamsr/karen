@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
 use App\Models\OrderDetail;
 use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Morilog\Jalali\Jalalian;
+
 class ShopController extends Controller
 {
     public function shop(Request $request)
@@ -30,7 +32,18 @@ class ShopController extends Controller
     }
     public function order(Request $request)
     {
-        //todo request validations
+        $validator = Validator::make($request->all(), [
+            "count" => "required|regex:/^[1-9]\d*$/",
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                "result" => false,
+                "error" => "INVALID",
+            ]);
+        }
+
+
         DB::beginTransaction();
         try {
             $order = null;

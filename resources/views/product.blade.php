@@ -110,6 +110,23 @@
                     'success'
                     )
                 }
+                if(resp['error'] == "INVALID") {
+                    Swal.fire({
+                        title:"خطا در ثبت سفارش",
+                        html:"مقدار وارد شده نا معتبر است!",
+                        icon: 'error',
+                        showConfirmButton: true,
+                    })
+                }
+            }).fail(function(err) {
+                if(err.status == 401) {
+                    Swal.fire({
+                        title:"خطا در ثبت سفارش",
+                        html:"لطفا جهت ثبت سفارش وارد حساب کاربری خود شوید!",
+                        icon: 'error',
+                        showConfirmButton: true,
+                    })
+                }
             });
         })
     });

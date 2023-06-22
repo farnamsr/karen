@@ -184,15 +184,15 @@ class DashboardController extends Controller
         }
     }
 
-    public function isAllDelivered($detailId)
-    {
-        $order = OrderDetail::where("id", $detailId)
-        ->first()->order()->first();
-        $statusList = $order->details()->pluck("status")->toArray();
-        if (! in_array(OrderDetail::STATUS_PENDING, $statusList)) {
-            $order->status = Order::STATUS_FINALIZED;
-            $order->save();
-        }
-    }
+    // public function isAllDelivered($detailId)
+    // {
+    //     $order = OrderDetail::where("id", $detailId)
+    //     ->first()->order()->first();
+    //     $statusList = $order->details()->pluck("status")->toArray();
+    //     if (! in_array(OrderDetail::STATUS_PENDING, $statusList)) {
+    //         $order->status = Order::STATUS_FINALIZED;
+    //         $order->save();
+    //     }
+    // }
 
 }
