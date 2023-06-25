@@ -49,6 +49,7 @@ class Product extends Model
             $image = $product->images()->first();
             $imageSrc = asset("storage/products/{$image->product_id}_{$image->id}_{$image->created_at}.{$image->ext}");
             $product["img_path"] = $imageSrc;
+            $product["href"] = route("getProduct", $product->id);
         }
         return $products;
     }

@@ -43,6 +43,7 @@ Route::post("/auth/info/{phone}", [AuthController::class, "compeleteInfo"])->nam
 
 Route::middleware(['auth'])->group(function () {
     Route::get("/panel", [PanelController::class, "panel"])->name("panel");
+    
     Route::prefix("/dashboard")->group(function() {
         //--- Products ---//
         Route::get("/products", [DashboardController::class, "dashboardProducts"])->name("dashboard-products");
@@ -59,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get("/order-products", [DashboardController::class, "orderProducts"])->name("order-products");
         Route::post("/update-details", [DashboardController::class, "updateDetails"])->name("update-details");
     });
+
     Route::post("/order", [ShopController::class, "order"])->name("order");
     Route::get("/order-details", [PanelController::class, "orderDetails"])->name("orderDetails");
     Route::get("/order-debt", [PanelController::class, "getOrderDebt"])->name("order-debt");

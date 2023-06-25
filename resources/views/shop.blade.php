@@ -21,11 +21,31 @@
         gap: 3rem;
         margin-top: 5rem;
     }
+    #catListBtn {
+        display: none;
+        font-size: 20px;
+        margin-top: 45px;
+    }
+    .mob-cat-selected{
+        background: #00ff7736;
+    }
+    @media only screen and (max-width: 600px) {
+        #catList{
+            display: none;
+        }
+        #catListBtn {
+            display:block;
+        }
+    }
 </style>
 <section>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-3 mt-5">
+            <div class="col-12 h1" id="catListBtn">
+                <i class='bx bx-filter'></i>
+                <span style="cursor: pointer" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" >دسته بندی محصولات</span>
+            </div>
+            <div class="col-md-3" id="catList">
                 <ul class="list-group" style="margin-right: -90px; width: 90%">
                     <div class="h5 mb-3" style="font-size: 18px;">دسته بندی محصولات</div>
                     @foreach ($cats as $cat)
@@ -59,6 +79,33 @@
         </div>
     </div>
 </section>
+
+
+{{-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Toggle bottom offcanvas</button> --}}
+
+<div class="offcanvas offcanvas-bottom" style="height: 100%;" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas-header text-center">
+    <h1 class="offcanvas-title mt-5" id="offcanvasBottomLabel">دسته بندی محصولات</h1>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body small">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul style="font-size: 15px;">
+                    @foreach ($cats as $cat)
+                    <li class="list-group-item mobile-cat-item" data-val="{{$cat->id}}" style="border: none;">
+                       <label class="form-check-label stretched-link"
+                        style="text-align: center; padding: 8px; width: 80%;"
+                        >{{$cat->name}}</label>
+                     </li>
+                   @endforeach
+                </ul>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 
@@ -72,8 +119,8 @@
         $(".cat-check").on("input", function() {
             checkedCats = [];
             currentPage = 1;
+            $(".shop-container").empty();
             $(".cat-check").each(function() {
-                $(".shop-container").empty();
                 if ($(this).is(":checked")) {
                     checkedCats.push($(this).val())
                 }
@@ -87,6 +134,16 @@
         $(document).on("click", ".box", function() {
             window.location.href = $(this).attr("data-href");
         });
+        $(".mobile-cat-item").on("click", function() {
+            $(this).toggleClass("mob-cat-selected");
+            checkedCats = [];
+            currentPage = 1;
+            $(".shop-container").empty();
+            $(".mob-cat-selected").each(function() {
+                checkedCats.push($(this).attr("data-val"));
+            });
+            getProducts(checkedCats, currentPage);
+        });
         function getProducts(checkedCats, currentPage) {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -98,14 +155,14 @@
                     let cards = resp["products"]["data"];
                     $(cards).each(function() {
                         let card = productCard(this['id'], this['name'],
-                            this['description'], this['price'], this['img_path']);
+                            this['description'], this['price'], this['img_path'], this['href']);
                         $(".shop-container").append(card);
                     });
                 }
             });
         }
-        function productCard(id, name, desc, price, imageSrc) {
-            return `<div class="box" id="${id}" style="cursor: pointer">
+        function productCard(id, name, desc, price, imageSrc, href) {
+            return `<div class="box" id="${id}" style="cursor: pointer" data-href="${href}">
             <div class="box-img">
             <img src="${imageSrc}" alt="">
             </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\IsAdmin;
 use App\Models\Category;
 use App\Models\OrderDetail;
 use App\Models\Product;
@@ -18,6 +19,10 @@ use \Morilog\Jalali\Jalalian;
 
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(IsAdmin::class);
+    }
     public function dashboardProducts(Request $request)
     {
         $products = Product::products();
