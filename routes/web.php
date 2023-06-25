@@ -59,6 +59,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get("/order-checks", [DashboardController::class, "orderChecks"])->name("order-checks");
         Route::get("/order-products", [DashboardController::class, "orderProducts"])->name("order-products");
         Route::post("/update-details", [DashboardController::class, "updateDetails"])->name("update-details");
+        //--- Colors ---//
+        Route::post("/color", [DashboardController::class, "color"])->name("color-create");
+        Route::post("/color/delete", [DashboardController::class, "deleteColor"])->name("color-delete");
+        Route::get("/colors", [DashboardController::class, "colors"])->name("colors");
     });
 
     Route::post("/order", [ShopController::class, "order"])->name("order");

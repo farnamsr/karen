@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger("order_id");
             $table->unsignedBigInteger("product_id");
             $table->unsignedBigInteger("payable");
-            $table->string("color", 32)->nullable();
             $table->integer("count")->unsigned();
+            $table->integer("color_id")->unsigned();
             $table->string("unit_price", 16);
             $table->tinyInteger("status")->default(1);
             $table->bigInteger("created_at")->unsigned();

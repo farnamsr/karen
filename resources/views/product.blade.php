@@ -49,6 +49,12 @@
                     <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
                 </div>
                 <input id="p-count" class="form-control text-center mt-4 w-50 mx-auto" type="text" placeholder="تعداد محصول" aria-label=".form-control-sm example">
+                <select name="" id="color" class="mt-3 mb-3 form-control w-50 text-center mx-auto">
+                    <option value="" selected disabled>انتخاب رنگ</option>
+                    @foreach ($colors as $color)
+                        <option value="{{$color->id}}">{{$color->name}}</option>
+                    @endforeach
+                </select>
                 <div class="d-grid gap-2 w-50 mt-4 mx-auto">
                     <button id="submit-order" class="btn btn-primary" type="button">افزودن به لیست سفارشات</button>
                   </div>
@@ -101,7 +107,7 @@
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 url: "{{route('order')}}",
                 type:"POST",
-                data: {pid:"{{$product->id}}", count: $("#p-count").val()}
+                data: {pid:"{{$product->id}}", count: $("#p-count").val(), color:$("#color").val()}
             }).done(function(resp) {
                 if(resp["result"] == true) {
                     Swal.fire(

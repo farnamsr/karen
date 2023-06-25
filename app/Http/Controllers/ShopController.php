@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Color;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
@@ -28,7 +29,8 @@ class ShopController extends Controller
     public function product($pid)
     {
         $product = Product::where("id", $pid)->with("images")->first();
-        return view("product", compact('product'));
+        $colors = Color::all();
+        return view("product", compact('product', 'colors'));
     }
     public function order(Request $request)
     {
@@ -64,7 +66,8 @@ class ShopController extends Controller
                 "product_id" => $request->pid,
                 "count" => $request->count,
                 "unit_price" => $price,
-                "payable" => $price * $request->count
+                "payable" => $price * $request->count,
+                "color_id" => $request->color
             ]);
             DB::commit();
             return response()->json(["result" => true]);

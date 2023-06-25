@@ -24,7 +24,7 @@ class OrderDetail extends Model
     protected $fillable = [
         'color', "order_id", "count",
         'payable', "product_id", "unit_price",
-        "status", "delivery_time"
+        "status", "delivery_time","color_id"
     ];
 
     public function order()
@@ -34,6 +34,10 @@ class OrderDetail extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+    public function color()
+    {
+        return $this->belongsTo(Color::class);
     }
 
     public static function mostSelled()

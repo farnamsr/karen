@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Image;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Color;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -34,7 +35,8 @@ class DashboardController extends Controller
         }
         else{
             $cats = $this->cats($request, false);
-            return view("dashboard.products", compact("cats", "products"));
+            $colors = $this->colors($request, false);
+            return view("dashboard.products", compact("cats", "products", "colors"));
         }
     }
     public function product(Request $request)
@@ -63,6 +65,7 @@ class DashboardController extends Controller
         return response()->json(["result" => true]);
     }
 
+    // Cats
     public function category(Request $request)
     {
         $cat = Category::create(["name" => $request->name]);
@@ -94,6 +97,38 @@ class DashboardController extends Controller
             ]);
         }
         return $cats;
+    }
+
+    // colors
+
+    public function color(Request $request)
+    {
+        $color = Color::create(["name" => $request->name]);
+        return response()->json([
+            "result" => true,
+            "colorId" => $color->id
+        ]);
+    }
+    public function deleteColor(Request $request)
+    {
+        // dd($request->all());
+        $response = [];
+        $color = Color::where("id", $request->colorId)->first();
+
+            $color->delete();
+            $response["result"] = true;
+        return response()->json($response);
+    }
+    public function colors(Request $request, $ajax = true)
+    {
+        $colors = Color::all();
+        if($ajax) {
+            return response()->json([
+                "result" => true,
+                "colors" => $colors
+            ]);
+        }
+        return $colors;
     }
 
     // Orders
@@ -151,7 +186,7 @@ class DashboardController extends Controller
     {
         $order = Order::where("id", $request->order_id)->first();
         $deltime = null;
-        $products = $order->details()->with("product")->get();
+        $products = $order->details()->with(["product", "color"])->get();
         foreach ($products as $product) {
             $product['count'] = fa_number($product['count']);
         }

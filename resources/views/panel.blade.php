@@ -35,7 +35,7 @@
                       </div>
                     </div>
                   </div>
-                    <button class="btn btn-outline-danger w-100 mt-4" type="button">ثبت سفارش اختصاصی</button>
+                    <button disabled class="btn btn-outline-danger w-100 mt-4" type="button">ثبت سفارش اختصاصی</button>
                     <div class="debt-cont mt-3">
                         <div>مجموع بدهی:</div>
                         <div class="text-center text-secondary" style="font-size: 30px; letter-spacing: 2px" id="totalDebt"></div>
@@ -385,6 +385,7 @@
                                   <th scope="col">#</th>
                                   <th scope="col">نام محصول</th>
                                   <th scope="col">تعداد</th>
+                                  <th scope="col">رنگ</th>
                                   <th scope="col">قیمت واحد (تومان)</th>
                                   <th scope="col">قابل پرداخت</th>
                                 </tr>
@@ -395,6 +396,7 @@
                             row += `<td>${this['id']}</td>`;
                             row += `<td>${this['product']['name']}</td>`;
                             row += `<td>${this['count']}</td>`;
+                            row += `<td>${this['color']['name']}</td>`;
                             row += `<td>${this['unit_price']}</td>`;
                             row += `<td>${this['payable']}</td>`;
                             row += `</tr>`;
@@ -730,6 +732,7 @@
                                   <th scope="col">#</th>
                                   <th scope="col">نام محصول</th>
                                   <th scope="col">تعداد</th>
+                                  <th scope="col">رنگ</th>
                                   <th scope="col">قیمت واحد (تومان)</th>
                                   <th scope="col">قابل پرداخت</th>
                                 </tr>
@@ -740,6 +743,7 @@
                             row += `<td>${this['id']}</td>`;
                             row += `<td>${this['product']['name']}</td>`;
                             row += `<td>${this['count']}</td>`;
+                            row += `<td>${this['color']['name']}</td>`;
                             row += `<td>${this['unit_price']}</td>`;
                             row += `<td>${this['payable']}</td>`;
                             table += row;

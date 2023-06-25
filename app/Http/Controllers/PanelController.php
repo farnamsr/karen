@@ -115,7 +115,7 @@ class PanelController extends Controller
         if($watingOrder) {
             $orderId = $watingOrder->id;
             $invoiceNumber = fa_number($watingOrder->invoice_number);
-            $details = $watingOrder->details()->with("product");
+            $details = $watingOrder->details()->with(["product", "color"]);
             $records = $this->faFormat($details->orderBy("created_at")->get());
         }
         return response()->json([
@@ -160,7 +160,7 @@ class PanelController extends Controller
     public function orderDetails(Request $request)
     {
         $order = Order::where("id", $request->order_id)->first();
-        $details = $order->details()->with("product")->get();
+        $details = $order->details()->with(["product","color"])->get();
         foreach($details as $detail) {
             $detail["unit_price"] = fa_number(number_format($detail["unit_price"]));
             $detail["payable"] = fa_number(number_format($detail["payable"]));

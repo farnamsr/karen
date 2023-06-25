@@ -47,8 +47,12 @@
              data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-left: 10px;">
               ثبت محصول جدید
             </button>
-            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#catModal">
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+             data-bs-target="#catModal" style="margin-left: 10px;">
                 دسته بندی محصولات
+              </button>
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#colorModal">
+                    رنگ ها
               </button>
           </div>
         </div>
@@ -168,7 +172,59 @@
                                             <tr>
                                                 <th class="cat-index" scope="row">{{$i + 1}}</th>
                                                 <td>{{$cats[$i]["name"]}}</td>
-                                                <td class="del-cat"><i id="{{$cats[$i]['id']}}" class='bx bx-trash text-danger'
+                                                <td class="del-cat"><i id="{{$cats[$i]['id']}}" class='bx bx-trash text-danger del-cat'
+                                                    style="cursor: pointer"></i></td>
+                                            </tr>
+                                        @endfor
+                                    </tbody>
+                                  </table>
+                            </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">بستن</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="colorModal" tabindex="-1" aria-labelledby="colorModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">رنگ ها</h5>
+          <button type="button" id="modal-close" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="product-form">
+                <div class="container">
+                    <div class="row">
+                            <div class="col-md-12 mt-4">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control"
+                                        placeholder="رنگ جدید"
+                                        id="color-name">
+                                    <button class="btn btn-primary" type="button" id="add-color">ثبت</button>
+                                  </div>
+                            </div>
+                            <div class="col-md-12">
+                                <table class="table text-center">
+                                    <thead>
+                                      <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">نام رنگ</th>
+                                        <th scope="col">حذف</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody id="colors-body">
+                                        @for ($i = 0; $i < count($colors); $i++)
+                                            <tr>
+                                                <th class="color-index" scope="row">{{$i + 1}}</th>
+                                                <td>{{$colors[$i]["name"]}}</td>
+                                                <td class=""><i id="{{$colors[$i]['id']}}" class='bx bx-trash text-danger del-color'
                                                     style="cursor: pointer"></i></td>
                                             </tr>
                                         @endfor
@@ -295,7 +351,7 @@
                 let row = `<tr>
                            <th class="cat-index" scope="row">${nextIndex}</th>
                            <td>${name}</td>
-                           <td class="del-cat"><i id="${resp['catId']}" class='bx bx-trash text-danger'
+                           <td class=""><i id="${resp['catId']}" class='bx bx-trash text-danger del-cat'
                             style="cursor: pointer"></i></td>
                             </tr>`;
                 $("#cats-body").append(row);
@@ -303,7 +359,7 @@
             });
         });
 
-        $(document).on("click", ".bx-trash", function() {
+        $(document).on("click", ".del-cat", function() {
             let row = $(this).parents()[1];
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -340,6 +396,43 @@
                             this['description'], this['price'], this['img_path']);
                         $("#cards-col").append(card);
                     });
+                }
+            });
+        });
+
+        $("#add-color").on("click", function() {
+            let name = $("#color-name").val();
+            let nextIndex = 1;
+            if($("#colors-body").children().length > 0) {
+                nextIndex = parseInt($($("#colors-body")
+               .children().last()[0]).find(".color-index")[0].innerHTML) + 1;
+            }
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url:"{{route('color-create')}}",
+                type:"POST",
+                data:{name: name}
+            }).done(function(resp) {
+                let row = `<tr>
+                           <th class="color-index" scope="row">${nextIndex}</th>
+                           <td>${name}</td>
+                           <td class="del-color"><i id="${resp['colorId']}" class='bx bx-trash text-danger'
+                            style="cursor: pointer"></i></td>
+                            </tr>`;
+                $("#colors-body").append(row);
+                reloadColors();
+            });
+        });
+        $(document).on("click", ".del-color", function() {
+            let row = $(this).parents()[1];
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url:"{{route('color-delete')}}",
+                type:"POST",
+                data:{colorId: $(this).attr("id")}
+            }).done(function(resp) {
+                if(resp["result"] != false) {
+                    $(row).remove();
                 }
             });
         });

@@ -58,7 +58,7 @@
                         <tr>
                             <td>{{++$i}}</td>
                             <td>{{$detail->product->name}}</td>
-                            <td>{{$detail->color}}</td>
+                            <td>{{$detail->color->name}}</td>
                             <td>{{fa_number($detail->count)}}</td>
                             <td>{{fa_number(number_format($detail->unit_price))}}</td>
                             <td>{{fa_number(number_format($detail->payable))}}</td>

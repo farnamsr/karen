@@ -163,12 +163,14 @@
                             <th scope="col">#</th>
                             <th scope="col">نام کالا</th>
                             <th scope="col">تعداد</th>
+                            <th scope="col">رنگ</th>
                             </tr>
                         </thead>
                         <tbody id='details-table' style=" font-size:18px;">
                             <tr id="details-row">
                                 <td class="text-secondary" id="product-name"></td>
                                 <td class="text-success" id="product-count"></td>
+                                <td class="text-secondary" id="product-color"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -330,6 +332,7 @@
                         let row = `<tr id="${this['id']}">`;
                         row += `<td>${i}</td>`;
                         row += `<td>${this['product']['name']}</td>`;
+                        row += `<td>${this['color']['name']}</td>`;
                         row += `<td>${this['count']}</td>`;
                         ++i;
                         $("#details-table").append(row);

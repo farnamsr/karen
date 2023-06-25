@@ -62,7 +62,7 @@ class User extends Authenticatable
     {
         return Order::where("user_id", $userId)
             ->where("status", Order::STATUS_MIN_PAIED)
-            ->with(["details", "payments"])
+            ->with(["details.color", "payments"])
             ->get();
     }
 
