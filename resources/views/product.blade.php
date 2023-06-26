@@ -54,8 +54,18 @@
                         <span style="padding: 15px;">قیمت عمده: </span>
                         <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px;" class="text-success">{{fa_number(number_format($product->price - $disc))}}</span>
                         <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
+                    @else
+                    <span style="padding: 15px;">قیمت: </span>
+                    <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px;" class="text-success">{{fa_number(number_format($product->price))}}</span>
+                    <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
                     @endif
                     @endauth
+                    
+                    @guest
+                    <span style="padding: 15px;">قیمت: </span>
+                    <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px;" class="text-success">{{fa_number(number_format($product->price))}}</span>
+                    <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
+                    @endguest
                 </div>
                 <input id="p-count" class="form-control text-center mt-4 w-50 mx-auto" type="text" placeholder="تعداد محصول" aria-label=".form-control-sm example">
                 <select name="" id="color" class="mt-3 mb-3 form-control w-50 text-center mx-auto">
