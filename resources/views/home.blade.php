@@ -57,9 +57,29 @@
             <div class="title-price">
                 <h3>{{$product->name}}</h3>
             </div>
-            <span class="price">
+            <span class="price" style=" margin-bottom: 10px;">
+                @auth
+                    @if (auth()->user()->hasWholeDisc == 1 AND $product->wholesaleـdiscount != null)
+                        <small style="color: gray; font-size: 12px;">تومان</small>
+                        <span style="text-decoration: line-through; color:rgb(241, 167, 148);">
+                            {{fa_number(number_format($product->price))}}
+                        </span>
+                        <br>
+                        <small style="color: gray; font-size: 12px;">تومان</small>
+                        <span style="">
+                            @php $disc = ($product->wholesaleـdiscount * $product->price) / 100 @endphp
+                            {{fa_number(number_format($product->price - $disc))}}
+                        </span>
+                    @else
+                        <small style="color: gray; font-size: 12px;">تومان</small>
+                        {{fa_number(number_format($product->price))}}
+                    @endif
+                @endauth
+                @guest
                 {{fa_number(number_format($product->price))}}
-                <small style="color: gray; margin-right: 6px;">تومان</small>
+                <small style="color: gray; font-size: 12px;">تومان</small>
+                @endguest
+                {{-- {{fa_number(number_format($product->price))}} --}}
             </span>
         </div>
         @endforeach

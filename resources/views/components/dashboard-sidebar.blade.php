@@ -17,7 +17,7 @@
              </a>
            </li>
            <li class="nav-item">
-             <a class="nav-link" href="#">
+             <a id="users" class="nav-link" href="{{route('dashboard-users')}}">
                <span data-feather="shopping-cart"></span>
                کاربران
              </a>

@@ -113,8 +113,11 @@
                                     </div>
                                 <div class="form-check form-switch">
                                     <label class="form-check-label" for="wholesaleـdiscount">دارای تخفیف عمده فروشی</label>
-                                    <input class="form-check-input" type="checkbox" name="wholesaleـdiscount">
+                                    <input id="disc-check" class="form-check-input" type="checkbox" name="wholesaleـdiscount">
                                 </div>
+                                <div class="input-group mb-3 mt-2">
+                                    <input value="" id="disc-inp" name="disc-percent" disabled type="number" max="100" min="0" class="form-control text-center" placeholder="درصد تخفیف" aria-label="" aria-describedby="">
+                                  </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="h5 mb-3">آپلود تصاویر</div>
@@ -416,7 +419,7 @@
                 let row = `<tr>
                            <th class="color-index" scope="row">${nextIndex}</th>
                            <td>${name}</td>
-                           <td class="del-color"><i id="${resp['colorId']}" class='bx bx-trash text-danger'
+                           <td class=""><i id="${resp['colorId']}" class='bx bx-trash text-danger del-color'
                             style="cursor: pointer"></i></td>
                             </tr>`;
                 $("#colors-body").append(row);
@@ -424,20 +427,30 @@
             });
         });
         $(document).on("click", ".del-color", function() {
+            let id = $(this).attr("id");
             let row = $(this).parents()[1];
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 url:"{{route('color-delete')}}",
                 type:"POST",
-                data:{colorId: $(this).attr("id")}
+                data:{colorId: id}
             }).done(function(resp) {
                 if(resp["result"] != false) {
                     $(row).remove();
                 }
             });
         });
+        $("#disc-check").on("change", function() {
+            if(this.checked) {
+                $("#disc-inp").prop("disabled", false);
+            }
+            else{
+                $("#disc-inp").prop("disabled", true).val("");
+            }
+        });
     });
 
 </script>
+@include("dashboard.footer")
 
 @endsection

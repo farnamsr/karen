@@ -53,7 +53,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $i = 0; $totalPayable = 0; @endphp
+                        @php $i = 0; $totalPayable = 0; $priceSum = 0; @endphp
                         @foreach ($order->details as $detail)
                         <tr>
                             <td>{{++$i}}</td>
@@ -64,6 +64,7 @@
                             <td>{{fa_number(number_format($detail->payable))}}</td>
                             @php
                                 $totalPayable += $detail->payable;
+                                $priceSum += $detail->count * $detail->unit_price;
                             @endphp
                         </tr>
                         @endforeach
@@ -78,7 +79,7 @@
                     <div class="price-info d-flex flex-column">
                         <div class="disc">
                             <span style="font-weight: bold">تخفیف:&nbsp; </span>
-                            <span id="disc">0</span>
+                            <span id="disc">{{fa_number(number_format($priceSum - $totalPayable))}}</span>
                         </div>
                         <div class="total">
                             <span style="font-weight: bold">مبلغ کل:&nbsp; </span>

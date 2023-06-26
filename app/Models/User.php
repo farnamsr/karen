@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use \Morilog\Jalali\Jalalian;
 
 
 
@@ -15,6 +17,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    const WHOLE_DISC_TRUE = 1;
+    const WHOLE_DISC_FALSE = 0;
     /**
      * The attributes that are mass assignable.
      *
@@ -24,6 +28,7 @@ class User extends Authenticatable
         'name',
         'lastname',
         'phone_number',
+        'hasWholeDisc'
     ];
 
     /**
@@ -40,6 +45,10 @@ class User extends Authenticatable
         return 'U';
     }
 
+    public function address()
+    {
+        return $this->hasMany(Address::class);
+    }
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
@@ -171,5 +180,14 @@ class User extends Authenticatable
             ->where("type", Payment::TYPE_CASH)
             ->get();
         return $records;
+    }
+
+    protected function createdAt(): Attribute
+    {
+        return Attribute::make(
+            get: function(string $value) {
+                return fa_number(Jalalian::forge($value)->format('%Y/%m/%d'));
+            },
+        );
     }
 }

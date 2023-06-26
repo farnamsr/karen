@@ -44,9 +44,18 @@
                 <div class="h2">{{$product->name}}</div>
                     <p style="padding: 15px;">{{$product->description}}</p>
                 <div class="price-text text-center">
-                    <span style="padding: 15px;">قیمت: </span>
-                    <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px;" class="text-success">{{fa_number(number_format($product->price))}}</span>
-                    <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
+                    @auth
+                    @if (auth()->user()->hasWholeDisc == 1 AND $product->wholesaleـdiscount != null)
+                        @php $disc = ($product->wholesaleـdiscount * $product->price) / 100 @endphp
+                        <span style="padding: 15px;">قیمت: </span>
+                        <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px;text-decoration: line-through;color: rgb(255, 134, 134)">{{fa_number(number_format($product->price))}}</span>
+                        <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
+                        <br>
+                        <span style="padding: 15px;">قیمت عمده: </span>
+                        <span style="font-size: 24px; font-weight: bold; letter-spacing: 2px;" class="text-success">{{fa_number(number_format($product->price - $disc))}}</span>
+                        <span style="margin-right: 10px;">&nbsp;تومان&nbsp;</span>
+                    @endif
+                    @endauth
                 </div>
                 <input id="p-count" class="form-control text-center mt-4 w-50 mx-auto" type="text" placeholder="تعداد محصول" aria-label=".form-control-sm example">
                 <select name="" id="color" class="mt-3 mb-3 form-control w-50 text-center mx-auto">

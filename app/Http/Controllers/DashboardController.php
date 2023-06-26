@@ -20,6 +20,38 @@ use \Morilog\Jalali\Jalalian;
 
 class DashboardController extends Controller
 {
+    // Users
+    public function dashboardUsers()
+    {
+        return view("dashboard.users");
+    }
+    public function fetchUsers(Request $request)
+    {
+        $users = User::with("address");
+        if($request->field) {
+            $users = $users->where($request->field, $request->search);
+        }
+        $users = $users->get();
+        foreach($users as $user) {
+            $user['phone_number'] = fa_number($user['phone_number']);
+        }
+        return response()->json([
+            "result" => true,
+            "users" => $users
+        ]);
+    }
+    public function updateDisc(Request $request)
+    {
+        // dd($request->all());
+        $user = User::find($request->userId);
+        $user->hasWholeDisc = $request->discStatus == "true" ? 
+            User::WHOLE_DISC_TRUE : User::WHOLE_DISC_FALSE;
+        $user->save();
+        return response()->json([
+            "result" => true,
+        ]);
+    }
+    //
     public function __construct()
     {
         $this->middleware(IsAdmin::class);
@@ -45,7 +77,7 @@ class DashboardController extends Controller
             "name" => $request->name,
             "description" => $request->desc,
             "wholesaleـdiscount" => isset($request["wholesaleـdiscount"]) ?
-                Product::WHOLE_SALE_DISC : null,
+                $request['disc-percent'] : null,
             "price" => $request->price, //todo prepairing price
             "category_id" => $request->cat
         ]);
@@ -111,12 +143,10 @@ class DashboardController extends Controller
     }
     public function deleteColor(Request $request)
     {
-        // dd($request->all());
         $response = [];
         $color = Color::where("id", $request->colorId)->first();
-
-            $color->delete();
-            $response["result"] = true;
+        $color->delete();
+        $response["result"] = true;
         return response()->json($response);
     }
     public function colors(Request $request, $ajax = true)

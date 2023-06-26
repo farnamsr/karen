@@ -399,7 +399,7 @@
         });
     });
 </script>
-
+@include("dashboard.footer")
 <script type="text/javascript">
 
 </script>

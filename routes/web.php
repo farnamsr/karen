@@ -63,6 +63,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post("/color", [DashboardController::class, "color"])->name("color-create");
         Route::post("/color/delete", [DashboardController::class, "deleteColor"])->name("color-delete");
         Route::get("/colors", [DashboardController::class, "colors"])->name("colors");
+        //--- Users ---//
+        Route::get("/users", [DashboardController::class, "dashboardUsers"])->name("dashboard-users");
+        Route::get("/users-fetch", [DashboardController::class, "fetchUsers"])->name("fetch-users");
+        Route::post("/user-update-disc", [DashboardController::class, "updateDisc"])->name("update-disc");
+
     });
 
     Route::post("/order", [ShopController::class, "order"])->name("order");

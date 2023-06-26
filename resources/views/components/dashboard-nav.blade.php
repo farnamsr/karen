@@ -8,7 +8,7 @@
      type="text" placeholder="جستجو" aria-label="جستجو" style="color: black">
     <div class="navbar-nav">
       <div class="nav-item text-nowrap">
-        <a class="nav-link px-3" href="#" style="color: white">خروج از سیستم</a>
+        <a id="logout" class="nav-link px-3" href="#" style="color: white">خروج از سیستم</a>
       </div>
     </div>
   </header>

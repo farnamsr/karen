@@ -61,12 +61,19 @@ class ShopController extends Controller
                 $order->invoice_number = Jalalian::now()->format("Ymd") . $order->id;
                 $order->save();
             }
+            //check for 
+            $product = Product::where("id", $request->pid)->first();
+            $payable = $price * $request->count;
+            if(auth()->user()->hasWholeDisc == 1 AND $product->wholesaleـdiscount != null){
+                $disc = (($product->wholesaleـdiscount * $product->price) / 100) * $request->count;
+                $payable = $payable - $disc;
+            }
             $details = OrderDetail::create([
                 "order_id" => $order->id,
                 "product_id" => $request->pid,
                 "count" => $request->count,
                 "unit_price" => $price,
-                "payable" => $price * $request->count,
+                "payable" => $payable,
                 "color_id" => $request->color
             ]);
             DB::commit();
