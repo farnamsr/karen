@@ -18,10 +18,24 @@ class ShopController extends Controller
         $cats = Category::all();
         $requestedCats = isset($request['cats']) ? $request['cats'] : [];
         $products = Product::products($requestedCats);
+        foreach ($products as $product) {
+            if($product->wholesaleـdiscount) {
+                $disc = (($product->wholesaleـdiscount * $product->price) / 100);
+                $product["disc"] = fa_number(number_format($product->price - $disc));
+            }
+            $product->price = fa_number(number_format($product->price));
+        }
+        $auth = false; $userDisc = false;
+        if(auth()->user()) {
+            $auth = true;
+            $userDisc = auth()->user()->hasWholeDisc;
+        }
         if($request->ajax()) {
             return response()->json([
                 "result" => true,
-                "products" => $products
+                "products" => $products,
+                "auth" => $auth,
+                "userDisc" => $userDisc
             ]);
         }
         return view("shop", compact("cats", "products"));

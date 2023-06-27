@@ -66,7 +66,28 @@
                         <div class="title-price">
                             <h3>{{$product->name}}</h3>
                         </div>
-                        <span class="price">{{$product->price}}</span>
+                        <span class="price">
+                            @auth
+                                @if (auth()->user()->hasWholeDisc == 1 AND $product->wholesaleـdiscount != null)
+                                    <small style="color: gray; font-size: 12px;">تومان</small>
+                                    <span style="text-decoration: line-through; color:rgb(241, 167, 148);">
+                                        {{$product->price}}
+                                    </span>
+                                    <br>
+                                    <small style="color: gray; font-size: 12px;">تومان</small>
+                                    <span style="">
+                                        {{$product->disc}}
+                                    </span>
+                                @else
+                                    <small style="color: gray; font-size: 12px;">تومان</small>
+                                    {{$product->price}}
+                                @endif
+                        @endauth
+                        @guest
+                        {{$product->price}}
+                        <small style="color: gray; font-size: 12px;">تومان</small>
+                        @endguest
+                        </span>
                     </div>
                     @endforeach
                 </div>
@@ -152,25 +173,45 @@
                 data:{ cats:checkedCats }
             }).done(function(resp) {
                 if(resp["result"] == true) {
+                    let auth = resp['auth'];
+                    let userDisc = resp['userDisc'];
                     let cards = resp["products"]["data"];
                     $(cards).each(function() {
                         let card = productCard(this['id'], this['name'],
-                            this['description'], this['price'], this['img_path'], this['href']);
+                            this['description'], this['price'],
+                            this['img_path'], this['href'], auth,
+                            userDisc, this['wholesaleـdiscount'], this['disc']);
                         $(".shop-container").append(card);
                     });
                 }
             });
         }
-        function productCard(id, name, desc, price, imageSrc, href) {
-            return `<div class="box" id="${id}" style="cursor: pointer" data-href="${href}">
+        function productCard(id, name, desc, price, imageSrc, href, auth, userDisc, prodDisc, disc) {
+            let card = `<div class="box" id="${id}" style="cursor: pointer" data-href="${href}">
             <div class="box-img">
             <img src="${imageSrc}" alt="">
             </div>
             <div class="title-price">
                 <h3>${name}</h3>
             </div>
-            <span class="price">${price}</span>
-            </div>`;
+            <span class="price">`;
+                if(auth == true && userDisc == 1 && prodDisc != null) {
+                    card += `<small style="color: gray; font-size: 12px;">تومان</small>
+                        <span style="text-decoration: line-through; color:rgb(241, 167, 148);">
+                            ${price}
+                        </span>
+                        <br>
+                        <small style="color: gray; font-size: 12px;">تومان</small>
+                        <span style="">
+                            ${disc}
+                        </span>`;
+                }
+                else{
+                    card += ` ${price}
+                            <small style="color: gray; font-size: 12px;">تومان</small>`;
+                }
+            card += `</span></div>`;
+            return card;
         }
     });
 </script>
