@@ -172,6 +172,11 @@ class DashboardController extends Controller
     {
         $orders = Order::where("status", $request->status)
             ->with(['user'])->get();
+        if($request->status == Order::STATUS_DELIVERED) {
+            foreach($orders as $order) {
+                $order['invoice'] = route("invoice") . "?order=". $order->id;
+            }
+        }
         return response()->json([
             "result" => true,
             "orders" => $orders

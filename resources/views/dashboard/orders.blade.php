@@ -42,10 +42,10 @@
             <div class="h4 mt-5 mb-4">فهرست سفارشات</div>
             <div class="mb-5 mx-auto d-flex justify-around">
                 <input type="search" class="form-control" id="order-search" placeholder="جستجوی سفارشات">
-                <select class="form-select">
+                <select class="form-select" id="order-status">
                     <option selected>وضعیت سفارش</option>
-                    <option value="1">جاری</option>
-                    <option value="2">تحویل کامل</option>
+                    <option value="2">جاری</option>
+                    <option value="3">تحویل کامل</option>
                   </select>
             </div>
             <table class="table text-center">
@@ -239,7 +239,7 @@
                             row += `<td>${this['invoice_number']}</td>`;
                             row += `<td data-id='${this['id']}' style='cursor:pointer;' class='order-payments text-warning'><i class='bx bxs-dollar-circle'></i></td>`;
                             row += `<td data-id='${this['id']}' style='cursor:pointer;' class='text-primary order-details'><i class='bx bx-cart'></i></td>`;
-                            row += `<td style='cursor:pointer;' class='text-secondary'><i class='bx bx-notepad'></i></td>`;
+                            row += `<td data-invoice="${this['invoice']}" style='cursor:pointer;' class='text-secondary invoice-td'><i class='bx bx-notepad'></i></td>`;
                             row += `</tr>`;
                         $("#orders-table").append(row);
                         ++i;
@@ -396,6 +396,14 @@
                 currentDelInput.val(fa);
             }
             else { currentDelInput = $(this) }
+        });
+
+        $("#order-status").on("change", function() {
+            ordersList($(this).val());
+        });
+
+        $(document).on("click", ".invoice-td", function() {
+            window.location.href = $(this).attr("data-invoice"); 
         });
     });
 </script>
