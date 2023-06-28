@@ -3,10 +3,23 @@
 @section("styles")
 <link rel="stylesheet" href="{{asset("css/home.css")}}">
 <link rel="stylesheet" href="{{asset("css/fonts.css")}}">
+<link rel="stylesheet" href="{{asset("css/bootstrap.css")}}">
+<style>
+    .btn-home{
+        background: #339b6b;
+        border-color:#339b6b;
+    }
+    .btn-home:hover, .btn-home:active, .btn-home:focus{
+        background: #339b6b;
+        border-color:#339b6b;
+        box-shadow: none;
+    }
+</style>
 @endsection
 
 @section("navbar")
 <header>
+{{-- @include("components.navbar") --}}
 @include("components.navbar")
 </header>
 @endsection
@@ -14,9 +27,9 @@
 @section("content")
 <section class="home" id="home">
     <div class="home-text">
-        <h1><Span>تست متن</Span> ساختگی برای نمایش <br> در وبسایت <span>متن نمونه</span></h1>
-        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است</p>
-        <a href="shop" class="btn">برو به فروشگاه</a>
+        <h1><Span style="">تست متن</Span> ساختگی برای نمایش <br> در وبسایت <span>متن نمونه</span></h1>
+        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده<br> از طراحان گرافیک است</p>
+        <a href="shop" class="btn btn-primary btn-home">برو به فروشگاه</a>
     </div>
 </section>
 
@@ -118,20 +131,12 @@
     </div>
 </section>
 
-<section class="newsletter" id="contact">
-    <h2>ما را دنبال کنید!</h2>
-    <div class="news-box">
-        <input type="text" placeholder="آدرس ایمیل تان را وارد کنید...">
-        <a href="#" class="btn">دنبال کردن</a>
-    </div>
-</section>
-
 @include("components.footer")
 @endsection
 
 @section("scripts")
 <script src="{{asset("js/jquery.js")}}"></script>
-<script src="{{asset("js/navbar.js")}}"></script>
+{{-- <script src="{{asset("js/navbar.js")}}"></script> --}}
 
 <script>
     $(document).ready(function() {

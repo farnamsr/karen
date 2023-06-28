@@ -46,7 +46,7 @@
                 <span style="cursor: pointer" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" >دسته بندی محصولات</span>
             </div>
             <div class="col-md-3" id="catList">
-                <ul class="list-group" style="margin-right: -90px; width: 90%">
+                <ul class="list-group" style="margin-right: -90px; width: 90%; margin-top:40px;">
                     <div class="h5 mb-3" style="font-size: 18px;">دسته بندی محصولات</div>
                     @foreach ($cats as $cat)
                      <li class="list-group-item" style="border: none; border-right: 1px solid rgb(235 235 235)">
@@ -131,7 +131,6 @@
 
 
 @section("scripts")
-<script src="{{asset("js/navbar.js")}}"></script>
 <script src="{{asset("js/jquery.js")}}"></script>
 <script>
     $(document).ready(function() {

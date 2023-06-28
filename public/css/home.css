@@ -27,7 +27,7 @@
     padding: 18px 100px;
     z-index: 1000;
   }
-  nav {
+  /* nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -65,7 +65,7 @@
   }
   nav ul.active {
     left: 0;
-  }
+  } */
   @media only screen and (max-width: 991px) {
     html {
       font-size: 56.25%;
@@ -78,15 +78,15 @@
     html {
       font-size: 50%;
     }
-    #ham-menu {
+    /* #ham-menu {
       display: block;
       color: var(--main-color);
     }
     nav a#logo,
     #ham-menu {
       font-size: 3.2rem;
-    }
-    nav ul {
+    } */
+    /* nav ul {
       background-color: #fff;
       position: fixed;
       left: -100vw;
@@ -99,7 +99,7 @@
       justify-content: space-around;
       transition: 1s;
       gap: 0;
-    }
+    } */
   }
   @media only screen and (max-width: 575px) {
     html {
@@ -115,7 +115,7 @@
   }
 
 
-  .logo {
+  /* .logo {
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--main-color);
@@ -141,7 +141,7 @@
     font-size: 2rem;
     cursor: pointer;
     display: none;
-  }
+  } */
 
   section {
     padding: 50px 10%;
@@ -150,7 +150,7 @@
   .home{
     width: 100%;
     min-height: 100vh;
-    background-image: url("../img/home.jpg");
+    background-image: url("../img/home2.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -182,13 +182,13 @@
     color: #518306
   }
 
-  .btn {
+  /* .btn {
     padding: 10px 14px;
     background: var(--main-color);
     color: #fff;
     border-radius: 0.3rem;
     font-size: 14px;
-  }
+  } */
 
   .btn:hover{
     background: #8fc53d;
