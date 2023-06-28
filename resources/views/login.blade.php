@@ -8,6 +8,11 @@
 @section("content")
 <style>
     body{ background: rgb(221, 223, 230) }
+    @media screen and (max-width: 768px) {
+        .row{
+            padding: 10px;
+        }
+    }
 </style>
 <section>
     <div class="container">

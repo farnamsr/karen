@@ -117,7 +117,6 @@
 
 @section("scripts")
 <script src="{{asset("js/jquery.js")}}"></script>
-<script src="{{asset("js/navbar.js")}}"></script>
 <script src="{{asset("js/sweet.js")}}"></script>
 <script>
     $(document).ready(function() {
