@@ -154,6 +154,10 @@
 
 <script>
     $(document).ready(function() {
+        $("img").hide();
+        $("img").on("load", function() {
+            $("img").fadeIn("slow");
+        })
         mobileSize();
         $(".box").on("click", function() {
             var win = window.open($(this).attr('data-href'));
