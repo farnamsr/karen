@@ -1,10 +1,15 @@
 @extends("main")
 
 @section("styles")
+<link rel="stylesheet" href="{{asset("css/home.css")}}">
 <link rel="stylesheet" href="{{asset("css/bootstrap.css")}}">
 <link rel="stylesheet" href="{{asset("css/fonts.css")}}">
 @endsection
-
+@section("navbar")
+<header>
+@include("components.navbar")
+</header>
+@endsection
 @section("content")
 <style>
     body{ background: rgb(221, 223, 230) }
@@ -17,10 +22,10 @@
 <section>
     <div class="container">
         <div class="row">
-            <div class="col-md-6 col-sm-12 mx-auto mt-5"
+            <div class="col-md-6 col-sm-12 mx-auto"
             style="background: white; padding-bottom: 200px;
              padding-left: 40px;padding-right: 40px;
-             border-radius: 10px;">
+             border-radius: 10px; margin-top: 100px;" id="login-col">
                 <div class="h3 text-center" style="margin-top: 100px;">ورود به سیستم</div>
                 <div class="mb-3 mt-4">
                     <label class="mb-2" for="phone">شماره تلفن همراه:</label>
@@ -40,6 +45,7 @@
         </div>
     </div>
 </section>
+
 @endsection
 
 @section("scripts")
@@ -47,6 +53,7 @@
 <script src="{{asset("js/sweet.js")}}"></script>
 <script>
     $(document).ready(function() {
+        mobileSize();
         let minutes;
         let serverTimestamp = "{{$timestamp}}";
         let clientTimestamp = Math.floor(Date.now() / 1000);
@@ -95,6 +102,9 @@
                 })
             }
         });
+        $(window).on("resize", function() {
+            mobileSize();
+        });
 
         function countDown(seconds) {
             let timerSecs, counterInterval;
@@ -110,6 +120,14 @@
                     clearInterval(counterInterval);
                 }
             }, 1000);
+        }
+        function mobileSize() {
+            if($(window).width() < 768) {
+                $("#login-col").css("margin-top", "50px");
+            }
+            else{
+                $("#login-col").css("margin-top", "100px");
+            }
         }
     });
 </script>
