@@ -105,9 +105,8 @@
 {{-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Toggle bottom offcanvas</button> --}}
 
 <div class="offcanvas offcanvas-bottom" style="height: 100%;" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
-  <div class="offcanvas-header text-center">
-    <h1 class="offcanvas-title mt-5" id="offcanvasBottomLabel">دسته بندی محصولات</h1>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="offcanvas-header" style="display: none">
+        <button id="cat-close-btn" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body small">
     <div class="container">
@@ -121,6 +120,11 @@
                         >{{$cat->name}}</label>
                      </li>
                    @endforeach
+                   <li class="list-group-item text-danger" style="border: none; cursor: pointer;" id="close-link">
+                    <label class="form-check-label stretched-link"
+                     style="text-align: center; padding: 8px; width: 80%;"
+                     >مشاهده محصولات</label>
+                  </li>
                 </ul>
             </div>
         </div>
@@ -218,6 +222,12 @@
             return card;
         }
     });
+</script>
+
+<script>
+    let closeBtn = document.getElementById("cat-close-btn");
+    let closeLink = document.getElementById("close-link");
+    closeLink.addEventListener("click", function() { closeBtn.click(); })
 </script>
 @endsection
 
