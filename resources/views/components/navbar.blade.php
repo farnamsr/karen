@@ -58,8 +58,8 @@
   </button>
   
   <div class="offcanvas offcanvas-start" tabindex="-1" id="mob-side" aria-labelledby="mob-side">
-    <div class="offcanvas-header">
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <div class="offcanvas-header" style="display: none">
+      <button id="side-close" type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
       <div class="container">
@@ -69,33 +69,88 @@
               style="font-size: 18px;
               text-align: center;
               margin-top: 40px;">
-              <li class="list-group-item">
-                <a class="nav-link active" aria-current="page" href="{{route('home')}}">خانه</a>
+              <li class="list-group-item" style="border: none;" id="mob-home">
+                <a class="nav-link active" aria-current="page" href="{{route('home')}}">
+                  <i class='bx bx-home-alt-2 text-secondary' ></i>
+                  <span class="text-dark" style="margin-right: 6px;">خانه</span>
+                </a>
               </li>
-              <li class="list-group-item">
-                <a class="nav-link" href="{{route('shop')}}">فروشگاه</a>
+              <li class="list-group-item" style="border: none;" id="mob-shop">
+                <a class="nav-link" href="{{route('shop')}}">
+                  <i class='bx bx-shopping-bag text-secondary' ></i>
+                  <span class="text-dark" style="margin-right: 6px;">فروشگاه</span>
+                </a>
               </li>
               @guest
-              <li class="list-group-item">
-                <a class="nav-link" href="{{route('login')}}">ورود به سیستم</a>
+              <li class="list-group-item" style="border: none;" id="mob-login">
+                <a class="nav-link" href="{{route('login')}}">
+                  <i class='bx bx-log-in text-secondary' ></i>
+                  <span class="text-dark" style="margin-right: 6px;">ورود به سیستم</span>
+                </a>
               </li>
               @endguest
 
               @auth
               @if (auth()->user()->roles->contains('name', 'admin'))
               <li class="list-group-item">
-                <a class="nav-link" href="{{route('dashboard-orders')}}">پنل مدیریت</a>
+                <a class="nav-link" href="{{route('dashboard-orders')}}">
+                  <i class='bx bxs-dashboard text-secondary'></i>
+                  <span class="text-dark" style="margin-right: 6px;">پنل مدیریت</span>
+                </a>
               </li>
                 
               @else
               <li class="list-group-item">
-                <a class="nav-link" href="{{route('panel')}}">ناحیه کاربری</a>
+                <a class="nav-link" href="{{route('panel')}}">
+                  <i class='bx bxs-dashboard text-secondary'></i>
+                  <span class="text-dark" style="margin-right: 6px;">ناحیه کاربری</span>
+                </a>
               </li>
               @endif
               @endauth
+              <li class="list-group-item mt-4" id="mob-side-close" style="cursor: pointer">
+                  <span class="text-danger" style="margin-right: 6px;">بستن</span>
+              </li>
             </ul>
+            <hr class="mt-5">
+          </div>
+          <div class="col-sm-12">
+            <div class="d-flex justify-content-center">
+              <div>
+                <img height="120" src="{{asset("img/logo.png")}}" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12">
+            <div class="d-flex justify-content-center">
+              <div>
+                <div class="h4">K&K Wood Works</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <style>
+    .mob-active{
+      background: #e8e8fb;
+      border-radius: 10px;
+    }
+  </style>
+
+  <script>
+    let splited = window.location.href.split("/");
+    let len = splited.length - 1;
+    let active = splited[len];
+    if (active.length < 1) {
+      active = "home";
+    }
+    let nav = document.getElementById("mob-" + active).classList.add("mob-active");
+
+    let mobSideClose = document.getElementById("mob-side-close");
+    let sideClose = document.getElementById("side-close");
+    mobSideClose.addEventListener("click", function() { sideClose.click(); })
+
+</script>
