@@ -120,6 +120,9 @@
 <script src="{{asset("js/sweet.js")}}"></script>
 <script>
     $(document).ready(function() {
+        setTimeout(() => {
+            $("#footer").fadeIn("slow");
+        }, 200);
         $("#submit-order").on("click", function() {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},

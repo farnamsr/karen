@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{asset("css/home.css")}}">
 <link rel="stylesheet" href="{{asset("css/fonts.css")}}">
 <link rel="stylesheet" href="{{asset("css/bootstrap.css")}}">
+<link rel="stylesheet" href="{{asset("css/animate.css")}}">
 <style>
     .btn-home{
         background: #339b6b;
@@ -13,6 +14,9 @@
         background: #339b6b;
         border-color:#339b6b;
         box-shadow: none;
+    }
+    #home-mobile{
+        display: none;
     }
 </style>
 @endsection
@@ -33,10 +37,21 @@
     </div>
 </section>
 
-<section class="shop" id="shop">
-    <div class="heading">
+<section class="text-center animate__bounceIn" id="home-mobile">
+    <div style="font-size: 20px; margin-top: 70px;">
+        <span>صنایع چوب کارن کیا</span>
+    </div>
+    <div class="mt-3">
+        <span style="font-size: 16px;">تولید و رنگ کاری انواع محصولات چوبی</span>
+    </div>
+    <div>
+        <a href="shop" class="btn btn-lg btn-primary btn-home mt-5">برو به فروشگاه</a>
+    </div>
+</section>
+
+<section class="shop" id="shop" style="display: none;">
+    <div id="h-sale" class="heading mt-3 mb-3" style="font-size: 30px;">
         <span>پر فروش ترین ها</span>
-        <h2>همین الان سفارش بده !</h2>
     </div>
     <div class="shop-container">
         @foreach ($mostSelled as $product)
@@ -75,10 +90,9 @@
     </div>
 </section>
 
-<section class="new" id="new">
-    <div class="heading" style="text-align: center">
+<section class="new" id="new" style="display: none;">
+    <div class="heading  mb-3" style="text-align: center; font-size: 30px;" id="h-new">
         <span style="color: #518306">جدید ترین محصولات</span>
-        <h2>همین الان سفارش بده !</h2>
     </div>
     <div class="new-container">
         @foreach ($newest as $product)
@@ -117,7 +131,7 @@
     </div>
 </section>
 
-<section class="about" id="about">
+<section class="about" id="about" style="display: none;">
     <div class="about-img">
         <img src="{{asset("img/about.jpg")}}" alt="">
     </div>
@@ -140,9 +154,42 @@
 
 <script>
     $(document).ready(function() {
+        mobileSize();
         $(".box").on("click", function() {
             var win = window.open($(this).attr('data-href'));
-        })
+        });
+
+        $(window).on("resize", function() {
+            mobileSize();
+        });
+
+        function mobileSize() {
+            if($(window).width() < 768) {
+                $("#home").hide();
+                $("#home-mobile").show();
+                $("#h-new").css("font-size", "20px");
+                $("#h-sale").css("font-size", "20px");
+                $(".box").css("margin-top", "10px");
+            }
+            else{
+                $("#home").show();
+                $("#home").css("display", "flex");
+                $("#home-mobile").hide();
+                $("#h-new").css("font-size", "30px");
+                $("#h-sale").css("font-size", "30px");
+                $(".box").css("margin-top", "1px");
+            }
+        }
+
+
+        setTimeout(() => {
+            $("#shop").fadeIn("slow");
+            $("#new").fadeIn("slow");
+            $("#about").fadeIn("slow");
+            $("#footer").fadeIn("slow");
+        }, 200);
+
+
     })
 </script>
 @endsection

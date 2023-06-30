@@ -127,6 +127,8 @@
     </div>
   </div>
 </div>
+@include("components.footer")
+
 @endsection
 
 
@@ -134,6 +136,9 @@
 <script src="{{asset("js/jquery.js")}}"></script>
 <script>
     $(document).ready(function() {
+        setTimeout(() => {
+            $("#footer").fadeIn("slow");
+        }, 200);
         let currentPage = 1;
         let checkedCats = [];
         $(".cat-check").on("input", function() {

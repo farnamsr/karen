@@ -1,4 +1,4 @@
-<section class="footer" id="footer">
+<section class="footer" id="footer" style="display: none">
     <div class="footer-box">
         <h2>متن <span>برند</span></h2>
         <p>متن نمونه جهت نمایش در بخش تبلیغات و تماس با مشتریان وبسایت</p>
@@ -36,6 +36,6 @@
     </div>
 </section>
 
-<div class="copyright">
+<div class="copyright" style="display: none">
     <p>&#169 کلیه حقوق مادی و معنوی برای سایت کارن محفوظ میباشد</p>
 </div>
