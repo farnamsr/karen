@@ -92,7 +92,7 @@
 
               @auth
               @if (auth()->user()->roles->contains('name', 'admin'))
-              <li class="list-group-item">
+              <li class="list-group-item" style="border: none;">
                 <a class="nav-link" href="{{route('dashboard-orders')}}">
                   <i class='bx bxs-dashboard text-secondary'></i>
                   <span class="text-dark" style="margin-right: 6px;">پنل مدیریت</span>
@@ -100,7 +100,7 @@
               </li>
                 
               @else
-              <li class="list-group-item">
+              <li class="list-group-item" style="border: none;">
                 <a class="nav-link" href="{{route('panel')}}">
                   <i class='bx bxs-dashboard text-secondary'></i>
                   <span class="text-dark" style="margin-right: 6px;">ناحیه کاربری</span>

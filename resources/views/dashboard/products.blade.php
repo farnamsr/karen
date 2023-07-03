@@ -42,19 +42,30 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 class="h2 mt-4 ">مدیریت محصولات</h1>
-          <div class="btn-toolbar mb-2 mb-md-0">
-            <button type="button" class="btn btn-primary"
-             data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-left: 10px;">
-              ثبت محصول جدید
-            </button>
-            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-             data-bs-target="#catModal" style="margin-left: 10px;">
-                دسته بندی محصولات
-              </button>
-              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#colorModal">
-                    رنگ ها
-              </button>
-          </div>
+{{--          <div class="btn-toolbar mb-2 mb-md-0">--}}
+{{--            <button type="button" class="btn btn-primary"--}}
+{{--             data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-left: 10px;">--}}
+{{--              ثبت محصول جدید--}}
+{{--            </button>--}}
+{{--            <button type="button" class="btn btn-warning" data-bs-toggle="modal"--}}
+{{--             data-bs-target="#catModal" style="margin-left: 10px;">--}}
+{{--                دسته بندی محصولات--}}
+{{--              </button>--}}
+{{--              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#colorModal">--}}
+{{--                    رنگ ها--}}
+{{--              </button>--}}
+{{--          </div>--}}
+
+            <div class="dropdown mt-5 mb-4">
+                <button style="width: 300px;" class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    گزینه ها
+                </button>
+                <ul style="width: 300px;" class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li data-bs-toggle="modal" data-bs-target="#exampleModal"><a class="dropdown-item" href="#">ثبت محصول جدید</a></li>
+                    <li data-bs-toggle="modal" data-bs-target="#catModal"><a class="dropdown-item" href="#">دسته بندی محصولات</a></li>
+                    <li data-bs-toggle="modal" data-bs-target="#colorModal"><a class="dropdown-item" href="#">رنگ ها</a></li>
+                </ul>
+            </div>
         </div>
         <h4 class="mt-5 mb-4">آخرین محصولات ثبت شده</h4>
         <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-col">
@@ -65,7 +76,8 @@
                   <div class="card-body">
                     <h5 class="card-title">{{$product->name}}</h5>
                     <p class="card-text">{{$product->description}}</p>
-                    <span class="text-left">{{$product->price}}</span>
+                      <hr>
+                    <span style="font-size: 17px; text-align: center" class="">{{$product->price}} <small>تومان</small></span>
                   </div>
                 </div>
               </div>
@@ -323,6 +335,18 @@
                 contentType: false,
                 data:fd
             }).done(function(resp) {
+                if(resp["error"] == "INVALID") {
+                    $("#submit-product").prop("disabled", false).text("ثبت محصول");
+                    Swal.fire({
+                        title:"خطا در ثبت",
+                        html:`<p>لطفا در وارد کردن ورودی ها دقت نمایید:</p>
+                               <p>فرمت فایل ها باید کمتر از ۲۰۴۸ کیلو بایت باشد</p>
+                               <p>فایل ها باید از نوع 'png', 'jpeg', 'jpg' باشند.</p>
+                               <p>ورودی های دسته بندی محصولات، قیمت ، عنوان و توضیحات محصول حتما باید پر شوند.</p>`,
+                        icon: 'error',
+                        showConfirmButton: true,
+                    })
+                }
                 if(resp["result"] == true) {
                     pond.removeFiles();
                     $("#submit-product").prop("disabled", false).text("ثبت محصول");

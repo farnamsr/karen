@@ -15,7 +15,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\File;
 use \Morilog\Jalali\Jalalian;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class DashboardController extends Controller
@@ -44,7 +47,7 @@ class DashboardController extends Controller
     {
         // dd($request->all());
         $user = User::find($request->userId);
-        $user->hasWholeDisc = $request->discStatus == "true" ? 
+        $user->hasWholeDisc = $request->discStatus == "true" ?
             User::WHOLE_DISC_TRUE : User::WHOLE_DISC_FALSE;
         $user->save();
         return response()->json([
@@ -59,6 +62,9 @@ class DashboardController extends Controller
     public function dashboardProducts(Request $request)
     {
         $products = Product::products();
+        foreach ($products as $product) {
+            $product['price'] = fa_number(number_format($product['price']));
+        }
         if($request->ajax()) {
             return response()->json([
                 "result" => true,
@@ -73,6 +79,20 @@ class DashboardController extends Controller
     }
     public function product(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            "name" => "required|string|max:64",
+            "desc" => "required|string|max:200",
+            "price" => "required|regex:/^[1-9][0-9]*$/",
+            "cat" => "required"
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                "result" => false,
+                "error" => "INVALID",
+                "messages" => $validator->messages()
+            ]);
+        }
         $product = Product::create([
             "name" => $request->name,
             "description" => $request->desc,

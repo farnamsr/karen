@@ -41,23 +41,27 @@
       @include("components.dashboard-nav")
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="h4 mt-5 mb-4">فهرست کاربران</div>
-        <div class="mb-5 mx-auto d-flex justify-around">
-            <input type="search" class="form-control w-50" id="search-inp" placeholder="جستجوی کاربر">
-        </div>
-        <table class="table text-center">
-            <thead style="background: #e7e5ff"><tr>
-                <th scope="col">#</th>
-                <th scope="col">نام مشتری</th>
-                <th scope="col">نام خانوادگی</th>
-                <th scope="col">شماره تماس</th>
-                <th scope="col">آدرس</th>
-                <th scope="col">دارای تخفیف عمده</th>
-                <th scope="col">تاریخ ثبت نام</th>
-                </tr>
-            </thead>
-            <tbody id='users-table' style=" font-size:18px;">
-            </tbody>
-        </table>
+          <div class="row">
+              <div class="col-md-6 col-sm-12 mb-4">
+                  <input type="search" class="form-control w-100" id="search-inp" placeholder="جستجوی کاربر">
+              </div>
+          </div>
+          <div class="table-responsive">
+              <table class="table text-center">
+                  <thead style="background: #e7e5ff"><tr>
+                      <th scope="col">#</th>
+                      <th scope="col">نام مشتری</th>
+                      <th scope="col">نام خانوادگی</th>
+                      <th scope="col">شماره تماس</th>
+                      <th scope="col">آدرس</th>
+                      <th scope="col">دارای تخفیف عمده</th>
+                      <th scope="col">تاریخ ثبت نام</th>
+                      </tr>
+                  </thead>
+                  <tbody id='users-table' style=" font-size:18px;">
+                  </tbody>
+              </table>
+          </div>
     </main>
     </div>
   </div>
@@ -107,7 +111,7 @@
 
         $(document).on("change", ".disc-check", function() {
             let id = $(this).attr("id");
-            let status = this.checked; 
+            let status = this.checked;
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 url:"{{route('update-disc')}}",

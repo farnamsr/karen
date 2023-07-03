@@ -40,14 +40,19 @@
         @include("components.dashboard-nav")
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="h4 mt-5 mb-4">فهرست سفارشات</div>
-            <div class="mb-5 mx-auto d-flex justify-around">
-                <input type="search" class="form-control" id="order-search" placeholder="جستجوی سفارشات">
-                <select class="form-select" id="order-status">
-                    <option selected>وضعیت سفارش</option>
-                    <option value="2">جاری</option>
-                    <option value="3">تحویل کامل</option>
-                  </select>
-            </div>
+{{--            <div class="mb-5 mx-auto d-flex justify-around">--}}
+                <div class="row">
+                    <div class="col-md-6 col-sm-12 mb-4">
+                        <input type="search" class="form-control" id="order-search" placeholder="جستجوی سفارشات">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-4">
+                        <select class="form-select" id="order-status">
+                            <option selected value="2">سفارشات جاری</option>
+                            <option value="3">سفارشات تحویل شده</option>
+                        </select>
+                    </div>
+                </div>
+{{--            </div>--}}
             <table class="table text-center">
                 <thead style="background: #e7e5ff"><tr>
                     <th scope="col">#</th>
@@ -379,6 +384,7 @@
             }).done(function(resp) {
                 if(resp["result"] == true) {
                     $("#close-dtl-modal").click();
+                    ordersList($("#order-status").val());
                     setTimeout(() => {
                         Swal.fire(
                             'ثبت موفق !',
@@ -403,7 +409,7 @@
         });
 
         $(document).on("click", ".invoice-td", function() {
-            window.location.href = $(this).attr("data-invoice"); 
+            window.location.href = $(this).attr("data-invoice");
         });
     });
 </script>
